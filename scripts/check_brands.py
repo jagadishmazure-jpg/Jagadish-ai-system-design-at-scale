@@ -27,6 +27,7 @@ SKIP = {"scripts/check_brands.py"}
 TEXT = re.compile(r"\.(py|md|txt|json|ya?ml|toml|csv|sql|html|ts|js)$")
 
 TERM_HASHES = frozenset({
+    "55a9f4f8994b1bbf2058ea38c8efb6c459000814d5f39c087002571639e6230e",
     "687fad4ed5a1beedfca05df1eee3cd66a9b73f6d9f172075c49641218a3b1d8e",
     "b942714f0ecb8e42f27b6baefd673c5dcb1676928ed0482a6d84b7a6b44e3dc4",
     "9e48bad6e31c128258257bd997eacca666f0dae2049027b545ea48a0cf43ed71",
@@ -112,6 +113,7 @@ TERM_HASHES = frozenset({
 })
 
 SPELLING_HASHES = frozenset({
+    "f21d8a4f1f93e8abd047bc92fc4f36be7a1a17da212c3833480466db2f192e6e",
     "388dc261fc7c3d801a063e148973402bbfcd9d3fe761859e7fd7994fc61598f1",
     "93f0b8b311c24dd13d013071a0fd6eded74526489a66a878650eca65ffbf8bbd",
     "a3513e58d97f94c200a0e741a7b67a70a898717dd4887f4bd248f2338eeed0b5",
