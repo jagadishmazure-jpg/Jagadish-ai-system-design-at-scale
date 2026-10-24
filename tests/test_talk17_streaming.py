@@ -137,7 +137,9 @@ def ledger():
 
 
 def test_first_open_creates_second_does_not(ledger):
-    assert ledger.open("k") and not ledger.open("k")
+    first = ledger.open("k")
+    second = ledger.open("k")
+    assert first and not second
 
 
 def test_after_returns_only_newer_events(ledger):

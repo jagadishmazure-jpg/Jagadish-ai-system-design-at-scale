@@ -335,12 +335,12 @@ class FakeModelServer:
                 try:
                     await asyncio.wait_for(self._wake[key].wait(), 0.05)
                 except asyncio.TimeoutError:
-                    pass
+                    pass  # no new event yet; loop and re-check the socket and ledger
             if held:
                 writer.write(held)
                 await writer.drain()
         except (ConnectionError, OSError):
-            pass
+            pass  # client went away; the finally block records it and cleans up
         finally:
             self._readers[key] -= 1
             if self._readers[key] == 0:
@@ -449,7 +449,7 @@ class MiniProxy:
                     cwriter.write(comp.flush())
                 await cwriter.drain()
         except (ConnectionError, OSError):
-            pass
+            pass  # client went away; the finally block records it and cleans up
         finally:
             watcher.cancel()
             uwriter.close()
