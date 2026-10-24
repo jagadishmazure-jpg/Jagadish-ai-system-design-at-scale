@@ -27,6 +27,7 @@ from .jobqueue import JobQueue, QueueFull
 from .observability import Metrics, make_tracer
 from .providers import FakeProvider
 from .resilience import ModelGateway
+from .tools import Commerce
 
 MAX_BODY = 16 * 1024
 PUBLIC = {"/healthz", "/readyz", "/metrics", "/version"}
@@ -34,6 +35,8 @@ ROUTES = {"/v1/chat": "agent", "/v1/chat/stream": "agent", "/v1/refunds": "jobs"
           "/v1/admin/policy": "admin", "/v1/orders": "orders", "/v1/webhooks/partner": "webhooks"}
 API_KEY_ROUTES = {"/v1/webhooks/partner": "webhooks:write"}  # partner callers: hashed API keys, not JWTs
 _SAFE_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
+# Talk 17: every hop must pass SSE through as it is produced: no proxy buffering, no compression.
+SSE_HEADERS = {"cache-control": "no-store, no-transform", "x-accel-buffering": "no"}
 
 
 def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, providers=None, replica: str = "r1",
@@ -59,7 +62,8 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
                               FakeProvider("fallback", latency_s={"small": 0.02, "large": 0.05}, seed=9)]
     admission = Admission(redis, clock=clock)
     agent = SupportAgent(admission, SemanticCache(redis, clock=clock), ModelGateway(providers),
-                         metrics=metrics, tracer=tracer, clock=clock)
+                         metrics=metrics, tracer=tracer, clock=clock,
+                         commerce=Commerce(redis))
     queue = JobQueue(redis, clock=clock)
     api_keys = api_keys or ApiKeyStore()
     order_events = OrderEvents()
@@ -191,7 +195,7 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
             yield f"event: done\ndata: {json.dumps({'intent': res.intent, 'cached': res.cached})}\n\n"
 
         return StreamingResponse(events(), media_type="text/event-stream",
-                                 headers={"cache-control": "no-store"})
+                                 headers=SSE_HEADERS)
 
     @app.post("/v1/refunds")
     async def refunds(request: Request):
@@ -244,7 +248,7 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
             finally:
                 order_events.unsubscribe(order_id, q)
 
-        return StreamingResponse(stream(), media_type="text/event-stream", headers={"cache-control": "no-store"})
+        return StreamingResponse(stream(), media_type="text/event-stream", headers=SSE_HEADERS)
 
     @app.post("/v1/webhooks/partner")
     async def partner_webhook(request: Request):

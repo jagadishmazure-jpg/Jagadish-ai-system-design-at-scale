@@ -1,0 +1,131 @@
+{
+  "note": "measured wall-clock through local sockets; the model is a fake with a set speed",
+  "scale": 1.0,
+  "model": {
+    "ttft_s": 0.88,
+    "tok_s": 25.0,
+    "tokens": 380
+  },
+  "machine": "Linux-6.12.94+-x86_64-with-glibc2.41",
+  "nginx": "nginx version: nginx/1.26.3",
+  "mini_proxy": {
+    "incident_service_and_gateway_buffered": {
+      "first_token_s": 16.0503,
+      "first_event_s": 16.0503,
+      "done_s": 16.0503,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "service_streams_gateway_buffers": {
+      "first_token_s": 16.0469,
+      "first_event_s": 16.0469,
+      "done_s": 16.0469,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "gateway_gzips_the_stream": {
+      "first_token_s": 16.0472,
+      "first_event_s": 16.0472,
+      "done_s": 16.0472,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "streamed_end_to_end": {
+      "first_token_s": 0.8838,
+      "first_event_s": 0.2229,
+      "done_s": 16.0464,
+      "tokens": 380,
+      "ended": "done"
+    }
+  },
+  "real_nginx": {
+    "nginx_buffering_on": {
+      "first_token_s": 5.4838,
+      "first_event_s": 5.4838,
+      "done_s": 16.0456,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "nginx_buffering_off": {
+      "first_token_s": 0.8841,
+      "first_event_s": 0.2235,
+      "done_s": 16.0464,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "nginx_gzip_on_stream": {
+      "first_token_s": 0.8832,
+      "first_event_s": 0.2226,
+      "done_s": 16.0504,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "nginx_repo_rule": {
+      "first_token_s": 0.8851,
+      "first_event_s": 0.2231,
+      "done_s": 16.0533,
+      "tokens": 380,
+      "ended": "done"
+    },
+    "nginx_buffering_on_but_service_sends_x_accel_no": {
+      "first_token_s": 0.8845,
+      "first_event_s": 0.2232,
+      "done_s": 16.0455,
+      "tokens": 380,
+      "ended": "done"
+    }
+  },
+  "drop_at_140": [
+    {
+      "mode": "resume_from_ledger",
+      "tokens_before_drop": 140,
+      "tokens_after_reconnect": 240,
+      "tokens_generated": 380,
+      "generations_started": 1,
+      "tool_calls_seen_twice": false
+    },
+    {
+      "mode": "regenerate",
+      "tokens_before_drop": 140,
+      "tokens_after_reconnect": 380,
+      "tokens_generated": 532,
+      "generations_started": 2,
+      "tool_calls_seen_twice": true
+    }
+  ],
+  "tab_close_at_140": [
+    {
+      "propagate_cancel": true,
+      "tokens_read": 140,
+      "tokens_generated": 166,
+      "tokens_saved": 214,
+      "grace_s": 1.0
+    },
+    {
+      "propagate_cancel": false,
+      "tokens_read": 140,
+      "tokens_generated": 380,
+      "tokens_saved": 0,
+      "grace_s": 1.0
+    }
+  ],
+  "stalled_hop": {
+    "tokens": 380,
+    "connections": 2,
+    "endings": [
+      "idle_timeout",
+      "done"
+    ],
+    "first_token_s": 0.8843,
+    "total_s": 16.046,
+    "last_id": 383,
+    "idle_timeout_s": 2.0,
+    "tokens_generated": 380
+  },
+  "ledger_expired": {
+    "action": "truncated",
+    "event": "truncated",
+    "offer": "continue"
+  },
+  "wall_s": 249.1
+}

@@ -31,6 +31,8 @@ jobs:
         run: python scripts/render_docs.py --check
       - name: Talk 15 caching results and evidence board match a fresh run
         run: python scripts/caching_bench.py --check && python scripts/evidence_board.py --check && python scripts/tail_latency_bench.py --check && python scripts/tail_evidence_board.py --check
+      - name: Talk 17 results and evidence board match a fresh run
+        run: python scripts/talk17_bench.py --check && python scripts/stream_evidence_board.py --check
       - name: Interview docs match the envelope calculator
         run: python scripts/render_interview.py --check
       - name: No real brand names in code or docs

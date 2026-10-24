@@ -74,4 +74,34 @@ The average number of requests in flight equals arrival rate times time held: L 
 | Wiring `SlowCallBreaker` and `DeadlineBudget` into the live `ModelGateway` and `/v1/chat` path | Planned |
 | Hedging against a real vendor with cancel-on-first-reply | Planned |
 
+## Talk 17 additions: the mean hides the tail, and pages that do not wait
+
+Simulated and seeded (`sysdesign/ext/tail_extras.py`, `docs/results/talk17.json`). The talk's own figures were a 90 ms mean, a 55 ms p50 and a 543 ms p99 (quoted). Ours come from 100,000 draws of a lognormal with a median of 55 ms.
+
+| | mean | p50 | p90 | p99 |
+|---|---|---|---|---|
+| Simulated | 90.0 ms | 55.0 ms | 196.3 ms | 551.5 ms |
+
+The mean looks healthy, yet 69% of requests are faster than it and the slowest 1% are 10x the median. Alert on percentiles, not on the mean.
+
+**1% of requests is not 1% of users.** The formula from panel (a) above applies per user session too. With a 1% chance per request of a p99-slow call:
+
+| Requests per session | 1 - 0.99^N | Simulated (4,000 users) |
+|---|---|---|
+| 1 | 1.0% | 0.9% |
+| 10 | 9.6% | 10.0% |
+| 50 | 39.5% | 40.3% |
+| 100 | 63.4% | 63.9% |
+
+**Partial page loads.** A page built from 100 parts that waits for all of them is as slow as its slowest part. `render_page()` shows what is ready at a 250 ms deadline and marks the rest "loading", to be filled in when they arrive. Over 2,000 simulated pages:
+
+| | p50 page ready | p99 page ready |
+|---|---|---|
+| Wait for all 100 parts | 625.7 ms | 2,196.2 ms |
+| Render ready parts at 250 ms | 250 ms | 250 ms |
+
+The cost: 99.75% of pages had at least one part still loading at 250 ms, 6.28 parts on average and 12 at p99. That is fine for side panels. It is not acceptable for the part the user came for, which should get its own deadline.
+
+Tests: `tests/test_talk17_tail_extras.py`.
+
 Run it: `python scripts/tail_latency_bench.py && python scripts/tail_evidence_board.py`; tests in `tests/test_talk16_tail_latency.py`.
