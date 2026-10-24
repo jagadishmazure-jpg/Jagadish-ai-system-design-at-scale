@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**360 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**396 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 ## Who it is for
@@ -20,7 +20,8 @@ traffic with each pattern off and on so the effect is a number, not a claim.
   before/after numbers for each pattern.
 - **Engineers adopting the patterns:** small, readable modules with the edge
   cases tested (see `docs/implementation-guide.md`).
-- **The owner:** interview preparation (`docs/interview-points.md`).
+- **The owner:** interview preparation (`docs/interview-points.md`, and the
+  [interview playbook](docs/interview-playbook.md)).
 
 ## Architecture
 
@@ -255,6 +256,7 @@ without a cost estimate first.
 | SSE streaming + TTFT metric | Built, tested |
 | Prometheus metrics, redacted OTel traces, SLO alerts, functional evals | Built, tested |
 | Capacity calculator | Built, tested |
+| Interview playbook: envelope calculator + CLI, 7 worked cases, 44-question bank, docs drift check | Built, tested (illustrative prices) |
 | docker compose (nginx, 3 replicas, Redis, Postgres, workers, autoscaler, Prometheus) | Built; smoke-tested in CI only (not run on the author's machine) |
 | Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
 | Talk 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
@@ -296,6 +298,16 @@ rps; load-aware sticky routing raised prefix-cache hit rate from 0.388 to 0.80;
 a sqlite index turned a 200k-row scan into an index search (about 1,350x faster
 per lookup); the reranker added about 4 ms and no hit@1 gain, so it is off.
 
+## Interview playbook
+
+How to answer an open-ended AI system design question, with the numbers computed by `sysdesign/ext/envelope.py` (illustrative prices) and checked in CI by `scripts/render_interview.py --check`.
+
+| Doc | What it covers |
+|---|---|
+| [interview-playbook.md](docs/interview-playbook.md) | Scoring, 45-minute budget, five questions mapped to decisions, envelope math, the per-conversation budget mistake, defense Q&A |
+| [interview-cases/](docs/interview-cases/README.md) | Seven worked fictional cases: bank, retail, insurance claims, healthcare intake, mortgage Q&A, enterprise search, low-latency checkout |
+| [interview-question-bank.md](docs/interview-question-bank.md) | 44 questions, each linked to the file or test that proves the answer |
+
 ## Talk 15: caching for LLM apps
 
 A simulated replay of a fictional support assistant whose bill grew 3.11x while traffic grew 1.3x: a timestamp at the start of the prompt meant the provider's prompt cache never matched. Moving the stable parts first cut input cost 58.2% and simulated median TTFT from 0.826s to 0.454s. Details, evidence board and limits: [`docs/caching.md`](docs/caching.md).
@@ -322,7 +334,7 @@ owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-360 tests collected
+396 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).
