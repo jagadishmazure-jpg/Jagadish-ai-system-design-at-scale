@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**178 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**227 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 ## Who it is for
@@ -185,7 +185,14 @@ python -m pytest -q                 # in-process: fakeredis + SQLite
 python -m loadtest.harness          # regenerate results.json
 python scripts/render_docs.py       # regenerate README numbers
 python scripts/capacity.py
+python -m loadtest.talks_benchmarks # batching, sticky routing, RAG, index proof -> talks_benchmarks.json
+python -m scripts.estimate_10m --scale 10   # 10M-user cost model at 10x
 ```
+
+Kubernetes (free, local): with Docker and kind installed, `kind create cluster`
+then `bash scripts/kind_rollout.sh`. It builds the image tagged with the git SHA,
+rolls v1 to v2 under in-cluster load, then rolls a broken v3 that must halt.
+CI runs the same script in the `image-and-kind-rollout` job.
 
 Local cluster (Docker, free): `python scripts/dev_token.py` creates a dev
 signing key and prints a token, then run `docker compose up --build`. That starts
@@ -249,10 +256,43 @@ without a cost estimate first.
 | Prometheus metrics, redacted OTel traces, SLO alerts, functional evals | Built, tested |
 | Capacity calculator | Built, tested |
 | docker compose (nginx, 3 replicas, Redis, Postgres, workers, autoscaler, Prometheus) | Built; smoke-tested in CI only (not run on the author's machine) |
-| OTLP export to a trace backend, Grafana dashboards | Planned |
+| Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
+| Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
+| Per-user share inside the model-call cap | Built, tested ([pitfalls](docs/pitfalls.md)) |
+| k8s manifests, zero-downtime rollout and broken-release halt on kind | Built; run for real in CI (`image-and-kind-rollout`) |
+| Terraform (Azure) and Bicep | Validated in CI only (`fmt`, `validate`, `bicep build`). Never applied |
+| GitOps desired state + alert-driven git revert | Built, tested (temp git repo). Argo CD Application written, not installed (Planned) |
+| Grafana dashboard (compose profile `observability`) | Written, not run; metric names checked by a test |
+| Compose network segmentation (edge / app / data) | Planned |
+| OTLP export to a trace backend | Planned |
 | Trained guard model, real embeddings, vector index for the cache | Planned |
 | Real provider adapters (keys from a secret store) | Planned |
 | Cloud deployment | Not planned without an approved cost estimate |
+
+## Talks 3-14: what was added
+
+Twelve more talks (latency, 10M-user cost, RAG choices, enterprise governance,
+MLOps, multi-agent and MCP, distributed systems, networking, backend evolution,
+DevOps and authentication) were turned into code on a separate branch and then
+ported here. Wherever main already had the pattern, the port reuses main's
+version instead of adding a second one. Per-talk status and proof:
+[`docs/coverage-map.md`](docs/coverage-map.md). Two findings from that work,
+one about a metric that counted canned answers as successes and one about a
+model-call cap with no per-user share, are written up in
+[`docs/pitfalls.md`](docs/pitfalls.md).
+
+Real run on a kind cluster in GitHub Actions (`loadtest/results/k8s_rollout.json`,
+image `3ad781097f0c`): the v1 to v2 rolling update took 7.7 s and served 2,023
+requests from an in-cluster load loop with 0 failures (465 answered by v1, 1,558
+by v2). A broken v3 whose readiness check fails was then rolled out. The rollout
+halted with all 3 v2 pods still ready, and 1,801 requests were served, 0 failed,
+0 by v3.
+
+Measured on one machine (`loadtest/results/talks_benchmarks.json`, simulated
+where a model is involved): batching 16 vs 1 raised throughput from 195 to 844
+rps; load-aware sticky routing raised prefix-cache hit rate from 0.388 to 0.80;
+a sqlite index turned a 200k-row scan into an index search (about 1,350x faster
+per lookup); the reranker added about 4 ms and no hit@1 gain, so it is off.
 
 ## Related repos
 
@@ -265,12 +305,12 @@ without a cost estimate first.
 
 ## Credits
 
-Patterns were prompted by two public talks on AI system design that the
+Patterns were prompted by 14 public talks on AI system design that the
 owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-178 tests collected
+227 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).

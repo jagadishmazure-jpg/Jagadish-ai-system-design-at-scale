@@ -1,0 +1,18 @@
+# STATUS: PLANNED - not installed anywhere. Shows how Argo CD would sync k8s/ from main.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kestrel-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jagadishmazure-jpg/Jagadish-ai-system-design-at-scale
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kestrel
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]

@@ -69,3 +69,10 @@ services:
       - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./deploy/alerts.yml:/etc/prometheus/alerts.yml:ro
     ports: ["9090:9090"]
+  grafana:  # opt-in: docker compose --profile observability up
+    image: grafana/grafana:11.2.0
+    profiles: ["observability"]
+    environment: { GF_AUTH_ANONYMOUS_ENABLED: "true", GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer }
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports: ["3000:3000"]

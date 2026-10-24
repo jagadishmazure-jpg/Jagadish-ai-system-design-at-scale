@@ -24,6 +24,8 @@ class Metrics:
         self.tokens = Counter("sd_llm_tokens_total", "LLM tokens", ["model", "kind"], registry=self.registry)
         self.cost = Counter("sd_llm_cost_usd_total", "LLM spend (USD)", ["model"], registry=self.registry)
         self.cache = Counter("sd_cache_events_total", "Semantic cache events", ["event"], registry=self.registry)
+        self.http = Counter("sd_http_requests_total", "Every HTTP response by route and status (error-rate SLO)",
+                            ["route", "status"], registry=self.registry)
         self.rejections = Counter("sd_admission_rejections_total", "429s by reason", ["reason"],
                                   registry=self.registry)
 

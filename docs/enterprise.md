@@ -1,0 +1,5 @@
+# Enterprise triad: governance, privacy, cost
+
+- **Governance.** Data never leaves its region (`test_residency_never_leaves_region`). Tool contracts reject extra fields (`test_tool_contract_rejects_extra_fields`). Every workflow step has one owner and an agent cannot authorize its own request (`test_one_owner_per_workflow_step`, `test_agent_cannot_self_authorize`). Code: `sysdesign/ext/governance.py`, `sysdesign/ext/multiagent.py`.
+- **Privacy.** Main already redacts PII before traces and cache (`sysdesign/pii.py`, `test_pii_never_reaches_traces_or_cache`); the additions here are right-to-be-forgotten and minimum-necessary sharing (`test_right_to_be_forgotten_and_minimum_necessary`).
+- **Cost (FinOps).** Main reserves token budget before spend and rejects negative estimates (`test_negative_estimate_cannot_refill_budget`). The addition is a FinOps ledger that also refuses negative charges (`test_finops_rejects_negatives`) and the per-conversation budget check in [cost-model-10m.md](cost-model-10m.md).

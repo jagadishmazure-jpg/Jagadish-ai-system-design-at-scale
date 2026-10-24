@@ -1,0 +1,5 @@
+# Desired state. Changing this file (via PR) is the only way to deploy.
+# Rollback = `git revert` the commit that changed it.
+app: kestrel-api
+image: kestrel-api
+version: v2

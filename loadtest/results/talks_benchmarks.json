@@ -1,0 +1,185 @@
+{
+ "note": "measured on one machine; fake model latency where a model is involved",
+ "batching": [
+  {
+   "batch_size": 1,
+   "p50_ms": 510.2,
+   "p95_ms": 976.49,
+   "throughput_rps": 195.0
+  },
+  {
+   "batch_size": 4,
+   "p50_ms": 62.59,
+   "p95_ms": 111.28,
+   "throughput_rps": 639.4
+  },
+  {
+   "batch_size": 16,
+   "p50_ms": 19.2,
+   "p95_ms": 27.07,
+   "throughput_rps": 844.3
+  }
+ ],
+ "sticky_routing": {
+  "round_robin": {
+   "router": "round_robin",
+   "hit_rate": 0.388,
+   "max_load": 50.0,
+   "avg_load": 50.0
+  },
+  "chwbl": {
+   "router": "chwbl",
+   "hit_rate": 0.8,
+   "max_load": 58,
+   "avg_load": 50.0
+  }
+ },
+ "index_proof": {
+  "rows": 200000,
+  "plan_before": "SCAN orders",
+  "plan_after": "SEARCH orders USING INDEX idx_orders_customer (customer=?)",
+  "ms_per_lookup_before": 7.268,
+  "ms_per_lookup_after": 0.0054,
+  "speedup_x": 1350.6
+ },
+ "context_funnel": {
+  "decision": "refund_eligibility",
+  "raw_tokens": 13055,
+  "funnel_tokens": 25,
+  "reduction_pct": 99.8,
+  "conversation_tokens": 429,
+  "compacted_tokens": 42
+ },
+ "capacity_1x": {
+  "inputs": {
+   "users": 10000000,
+   "requests_per_user_day": 5,
+   "tokens_in": 2000,
+   "tokens_out": 1000,
+   "peak_factor": 3.0,
+   "mix": {
+    "small": 0.75,
+    "mid": 0.2,
+    "frontier": 0.05
+   },
+   "turns_per_conversation": 4,
+   "target_per_conversation_usd": 0.01
+  },
+  "estimate": {
+   "requests_per_day": 50000000,
+   "avg_qps": 578.703704,
+   "peak_qps": 1736.111111,
+   "tokens_per_day": 150000000000,
+   "tokens_per_month": 4500000000000,
+   "cost_per_request": 0.003375,
+   "cost_per_day": 168750.0,
+   "cost_per_month": 5062500.0,
+   "cost_per_year": 61593750.0,
+   "cost_per_conversation": 0.0135
+  },
+  "budget": {
+   "per_turn": 0.003375,
+   "per_conversation": 0.0135,
+   "target": 0.01,
+   "within_budget": false,
+   "per_turn_looks_ok_but_conversation_fails": true
+  },
+  "step_cap_frontier": 0
+ },
+ "capacity_10x": {
+  "inputs": {
+   "users": 100000000,
+   "requests_per_user_day": 5,
+   "tokens_in": 2000,
+   "tokens_out": 1000,
+   "peak_factor": 3.0,
+   "mix": {
+    "small": 0.75,
+    "mid": 0.2,
+    "frontier": 0.05
+   },
+   "turns_per_conversation": 4,
+   "target_per_conversation_usd": 0.01
+  },
+  "estimate": {
+   "requests_per_day": 500000000,
+   "avg_qps": 5787.037037,
+   "peak_qps": 17361.111111,
+   "tokens_per_day": 1500000000000,
+   "tokens_per_month": 45000000000000,
+   "cost_per_request": 0.003375,
+   "cost_per_day": 1687500.0,
+   "cost_per_month": 50625000.0,
+   "cost_per_year": 615937500.0,
+   "cost_per_conversation": 0.0135
+  },
+  "budget": {
+   "per_turn": 0.003375,
+   "per_conversation": 0.0135,
+   "target": 0.01,
+   "within_budget": false,
+   "per_turn_looks_ok_but_conversation_fails": true
+  },
+  "step_cap_frontier": 0
+ },
+ "routing_mix_solution": {
+  "mix": {
+   "small": 0.95,
+   "mid": 0.0,
+   "frontier": 0.05
+  },
+  "per_turn": 0.002355,
+  "per_conversation": 0.00942,
+  "target": 0.01,
+  "within_budget": true,
+  "per_turn_looks_ok_but_conversation_fails": false
+ },
+ "reranker": {
+  "off": {
+   "reranker": false,
+   "hit_at_1": 0.875,
+   "hit_at_2": 0.875,
+   "p50_ms": 0.153
+  },
+  "on": {
+   "reranker": true,
+   "hit_at_1": 0.875,
+   "hit_at_2": 0.875,
+   "p50_ms": 4.378
+  },
+  "hit_at_1_gain": 0.0,
+  "added_p50_ms": 4.225,
+  "rule": "keep if hit@1 gain >= 0.05 and added p50 <= 10 ms",
+  "keep_reranker": false
+ },
+ "chunk_size": [
+  {
+   "chunk_words": 8,
+   "overlap_words": 4,
+   "chunks": 43,
+   "top1_has_fact": 0.3125,
+   "avg_tokens_returned": 11.1
+  },
+  {
+   "chunk_words": 16,
+   "overlap_words": 8,
+   "chunks": 22,
+   "top1_has_fact": 0.6875,
+   "avg_tokens_returned": 20.9
+  },
+  {
+   "chunk_words": 32,
+   "overlap_words": 16,
+   "chunks": 11,
+   "top1_has_fact": 0.6875,
+   "avg_tokens_returned": 43.1
+  },
+  {
+   "chunk_words": 64,
+   "overlap_words": 32,
+   "chunks": 6,
+   "top1_has_fact": 0.75,
+   "avg_tokens_returned": 76.7
+  }
+ ]
+}

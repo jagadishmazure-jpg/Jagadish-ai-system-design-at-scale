@@ -4,7 +4,8 @@ Three gates, checked in order, each returning a Retry-After hint:
 1. token bucket per (tenant, user) on request rate,
 2. daily and monthly LLM-token budgets per (tenant, user),
 3. a cluster-wide cap on concurrent model calls (leased, so a crashed
-   replica's slots expire instead of leaking).
+   replica's slots expire instead of leaking), with a per-user share inside
+   it so one user's parallel calls cannot take every slot.
 All state lives in Redis and every check is a single Lua script, so
 replicas cannot race each other into over-admitting.
 """
@@ -62,6 +63,19 @@ end
 return 0
 """
 
+SEM_FAIR_LUA = """
+-- KEYS: global zset, user zset ; ARGV: now, global limit, user limit, lease, holder
+redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[1])
+redis.call('ZREMRANGEBYSCORE', KEYS[2], '-inf', ARGV[1])
+if redis.call('ZCARD', KEYS[2]) >= tonumber(ARGV[3]) then return 2 end
+if redis.call('ZCARD', KEYS[1]) >= tonumber(ARGV[2]) then return 0 end
+local exp = tonumber(ARGV[1]) + tonumber(ARGV[4])
+redis.call('ZADD', KEYS[1], exp, ARGV[5])
+redis.call('ZADD', KEYS[2], exp, ARGV[5])
+redis.call('EXPIRE', KEYS[2], math.ceil(tonumber(ARGV[4])) + 1)
+return 1
+"""
+
 
 @dataclass(frozen=True)
 class Limits:
@@ -70,6 +84,7 @@ class Limits:
     tokens_per_day: int = 50_000
     tokens_per_month: int = 600_000
     max_concurrent_model_calls: int = 32
+    max_user_model_calls: int = 4  # per-user share of the cluster cap
     lease_s: float = 30.0
 
 
@@ -95,6 +110,8 @@ class Admission:
         self._bucket = redis.register_script(BUCKET_LUA)
         self._budget = redis.register_script(BUDGET_LUA)
         self._sem = redis.register_script(SEM_LUA)
+        self._sem_fair = redis.register_script(SEM_FAIR_LUA)
+        self._holders: dict[str, str] = {}  # holder -> per-user key, for release
 
     def _now(self) -> float:
         return self.clock.now() if self.clock else time.time()
@@ -153,16 +170,29 @@ class Admission:
         day, month = self._budget_keys(tenant, user)
         return int(self.r.get(day) or 0), int(self.r.get(month) or 0)
 
-    def acquire_model_slot(self) -> str | None:
-        """Cluster-wide cap (from the standard limits): protects the provider quota for everyone."""
+    def acquire_model_slot(self, tenant: str | None = None, user: str | None = None) -> str | None:
+        """Cluster-wide cap (from the standard limits): protects the provider quota for everyone.
+        With a user, that user may hold at most max_user_model_calls of the slots at once."""
         lim = self.limits_for("standard")
         holder = uuid.uuid4().hex
-        ok = self._sem(keys=[f"{self.p}:sem:model"],
-                       args=[self._now(), lim.max_concurrent_model_calls, lim.lease_s, holder])
-        return holder if int(ok) else None
+        if user is None:
+            ok = self._sem(keys=[f"{self.p}:sem:model"],
+                           args=[self._now(), lim.max_concurrent_model_calls, lim.lease_s, holder])
+            return holder if int(ok) else None
+        ukey = f"{self.p}:sem:user:{tenant}:{user}"
+        ok = self._sem_fair(keys=[f"{self.p}:sem:model", ukey],
+                            args=[self._now(), lim.max_concurrent_model_calls, lim.max_user_model_calls,
+                                  lim.lease_s, holder])
+        if int(ok) != 1:
+            return None
+        self._holders[holder] = ukey
+        return holder
 
     def release_model_slot(self, holder: str) -> None:
         self.r.zrem(f"{self.p}:sem:model", holder)
+        ukey = self._holders.pop(holder, None)
+        if ukey:
+            self.r.zrem(ukey, holder)
 
     def admit(self, tenant: str, user: str, tier: str, token_estimate: int) -> Decision:
         d = self.check_rate(tenant, user, tier)

@@ -1,0 +1,23 @@
+{
+  "source": "kind cluster in GitHub Actions (real run)",
+  "image_sha": "3ad781097f0c",
+  "v1_to_v2": {
+    "ok": 2023,
+    "failed": 0,
+    "versions": {
+      "v1": 465,
+      "v2": 1558
+    },
+    "rollout_seconds": 7.7
+  },
+  "broken_v3": {
+    "ok": 1801,
+    "failed": 0,
+    "versions": {
+      "v2": 1801
+    },
+    "rollout_halted": true,
+    "ready_replicas_during_stall": 3,
+    "served_v3": 0
+  }
+}

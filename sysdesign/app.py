@@ -21,20 +21,23 @@ from .agent import SupportAgent
 from .auth import AuthError, LocalIssuer, Verifier
 from .cache import SemanticCache
 from .checkpoints import CheckpointStore
+from .ext.authn import ApiKeyStore
+from .ext.events import OrderEvents
 from .jobqueue import JobQueue, QueueFull
 from .observability import Metrics, make_tracer
 from .providers import FakeProvider
 from .resilience import ModelGateway
 
 MAX_BODY = 16 * 1024
-PUBLIC = {"/healthz", "/readyz", "/metrics"}
+PUBLIC = {"/healthz", "/readyz", "/metrics", "/version"}
 ROUTES = {"/v1/chat": "agent", "/v1/chat/stream": "agent", "/v1/refunds": "jobs", "/v1/jobs": "jobs",
-          "/v1/admin/policy": "admin"}
+          "/v1/admin/policy": "admin", "/v1/orders": "orders", "/v1/webhooks/partner": "webhooks"}
+API_KEY_ROUTES = {"/v1/webhooks/partner": "webhooks:write"}  # partner callers: hashed API keys, not JWTs
 _SAFE_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
 
 
 def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, providers=None, replica: str = "r1",
-              clock=None) -> FastAPI:
+              clock=None, api_keys: ApiKeyStore | None = None) -> FastAPI:
     if redis is None:
         url = os.environ.get("REDIS_URL")
         if url:  # pragma: no cover - compose path
@@ -58,10 +61,13 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
     agent = SupportAgent(admission, SemanticCache(redis, clock=clock), ModelGateway(providers),
                          metrics=metrics, tracer=tracer, clock=clock)
     queue = JobQueue(redis, clock=clock)
+    api_keys = api_keys or ApiKeyStore()
+    order_events = OrderEvents()
 
     app = FastAPI(title="ai-system-design-at-scale", version="0.1.0")
     app.state.agent, app.state.queue, app.state.store = agent, queue, store
     app.state.exporter, app.state.issuer, app.state.metrics = exporter, issuer, metrics
+    app.state.api_keys, app.state.order_events = api_keys, order_events
 
     @app.middleware("http")
     async def api_gateway(request: Request, call_next):
@@ -69,11 +75,15 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
         rid = rid if _SAFE_ID.match(rid) else uuid.uuid4().hex  # never echo attacker-controlled ids
         request.state.request_id = rid
 
+        path = request.url.path
+        route = path if path in PUBLIC else next((p for p in ROUTES if path == p or path.startswith(p + "/")),
+                                                 "unmatched")
+
         def reply(status: int, body: dict, headers: dict | None = None):
+            metrics.http.labels(route, str(status)).inc()
             h = {"x-request-id": rid, "x-replica": replica, **(headers or {})}
             return JSONResponse(body, status_code=status, headers=h)
 
-        path = request.url.path
         if path not in PUBLIC and not any(path == p or path.startswith(p + "/") for p in ROUTES):
             return reply(404, {"error": "no route"})
         declared = request.headers.get("content-length")
@@ -85,7 +95,15 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
         body = await request.body()  # also enforces the limit for chunked bodies with no length header
         if len(body) > MAX_BODY:
             return reply(413, {"error": "payload too large"})
-        if path not in PUBLIC:
+        if route in API_KEY_ROUTES:
+            raw = request.headers.get("x-api-key")
+            if not raw:
+                return reply(400, {"error": "x-api-key header required"})
+            rec = api_keys.verify(raw, API_KEY_ROUTES[route])
+            if rec is None:
+                return reply(401, {"error": "invalid, expired or revoked api key"})
+            request.state.partner = rec
+        elif path not in PUBLIC:
             auth = request.headers.get("authorization", "")
             if not auth.lower().startswith("bearer "):
                 return reply(401, {"error": "missing bearer token"}, {"www-authenticate": "Bearer"})
@@ -95,7 +113,12 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
                 return reply(401, {"error": str(e)}, {"www-authenticate": "Bearer"})
             if path.startswith("/v1/admin") and "policy:write" not in request.state.identity.scopes:
                 return reply(403, {"error": "forbidden"})
-        resp = await call_next(request)
+        try:
+            resp = await call_next(request)
+        except Exception:
+            metrics.http.labels(route, "500").inc()
+            raise
+        metrics.http.labels(route, str(resp.status_code)).inc()
         resp.headers["x-request-id"] = rid
         resp.headers["x-replica"] = replica
         return resp
@@ -120,8 +143,15 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
     async def healthz():
         return {"ok": True, "replica": replica}
 
+    @app.get("/version")
+    async def version():
+        return {"version": os.environ.get("APP_VERSION", "dev"), "git_sha": os.environ.get("GIT_SHA", "unknown"),
+                "replica": replica}
+
     @app.get("/readyz")
     async def readyz():
+        if os.environ.get("APP_BROKEN_CONFIG") == "1":  # stands in for a bad config/secret in a release
+            return JSONResponse({"ready": False, "reason": "broken_config"}, status_code=503)
         try:
             agent.admission.r.ping()
         except Exception:  # pragma: no cover - only when Redis is down
@@ -194,6 +224,42 @@ def build_app(redis=None, store=None, issuer: LocalIssuer | None = None, provide
         if owner != request.state.identity.user_id:
             return JSONResponse({"error": "not found"}, status_code=404)
         return {"job_id": job_id, "status": st, "step": cp["step"] if cp else 0}
+
+    @app.get("/v1/orders/{order_id}/events")
+    async def order_events_stream(order_id: str, request: Request):
+        """Push order-status changes over SSE instead of clients polling."""
+        order = agent.commerce.orders.get(order_id)
+        if order is None or order["user_id"] != request.state.identity.user_id:
+            return JSONResponse({"error": "not found"}, status_code=404)  # same answer for missing and not-yours
+        q = order_events.subscribe(order_id)
+
+        async def stream():
+            try:
+                yield f"data: {json.dumps({'order_id': order_id, 'status': order['status']})}\n\n"
+                while True:
+                    ev = await q.get()
+                    yield f"data: {json.dumps(ev)}\n\n"
+                    if ev["status"] in ("delivered", "cancelled"):
+                        return
+            finally:
+                order_events.unsubscribe(order_id, q)
+
+        return StreamingResponse(stream(), media_type="text/event-stream", headers={"cache-control": "no-store"})
+
+    @app.post("/v1/webhooks/partner")
+    async def partner_webhook(request: Request):
+        try:
+            data = json.loads(await request.body() or b"{}")
+            order_id, status = str(data["order_id"]), str(data["status"])
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return JSONResponse({"error": "order_id and status required"}, status_code=422)
+        if status not in {"processing", "shipped", "delivered", "cancelled"}:
+            return JSONResponse({"error": "unknown status"}, status_code=422)
+        order = agent.commerce.orders.get(order_id)
+        if order is None:
+            return JSONResponse({"error": "not found"}, status_code=404)
+        order["status"] = status
+        return {"order_id": order_id, "status": status, "pushed_to": order_events.publish(order_id, status)}
 
     @app.post("/v1/admin/policy")
     async def policy_change(request: Request):

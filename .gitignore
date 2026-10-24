@@ -4,3 +4,9 @@ __pycache__/
 .ruff_cache/
 deploy/dev-keys/
 .venv/
+deploy/dev-certs/
+results/*.tmp
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+*.tfstate*
+tf.zip
