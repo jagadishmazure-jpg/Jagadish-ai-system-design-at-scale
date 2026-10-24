@@ -21,6 +21,7 @@ class Probe:
         self.port = u.port or (443 if u.scheme == "https" else 80)
         self.path = (u.path or "/") + (f"?{u.query}" if u.query else "")
         self.ctx = ctx or ssl.create_default_context()
+        self.ctx.minimum_version = max(self.ctx.minimum_version, ssl.TLSVersion.TLSv1_2)
         self.timeout = timeout
         self.sock = None
         self.addr = None

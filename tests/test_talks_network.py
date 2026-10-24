@@ -108,7 +108,7 @@ def test_loopback_bind_is_unreachable_from_other_interfaces():
     ip = _lan_ip()
     if ip is None:
         pytest.skip("no non-loopback interface")
-    for bind, reachable in (("127.0.0.1", False), ("0.0.0.0", True)):  # noqa: S104
+    for bind, reachable in (("127.0.0.1", False), (ip, True)):  # loopback-only vs the LAN address
         srv = socket.socket()
         srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         srv.bind((bind, 0))

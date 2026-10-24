@@ -127,7 +127,8 @@ def test_cap_partition_cp_vs_ap():
     ap = ReplicatedStore(mode="AP")
     for rep in ap.replicas[1:]:
         rep.reachable = False
-    assert ap.write("k", 1) and ap.read("k") == 1 and ap.replicas[1].data.get("k") is None  # stale elsewhere
+    wrote = ap.write("k", 1)
+    assert wrote and ap.read("k") == 1 and ap.replicas[1].data.get("k") is None  # stale elsewhere
 
 
 def test_chwbl_hit_rate_and_bounded_load():

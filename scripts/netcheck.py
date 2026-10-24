@@ -38,7 +38,9 @@ def check(url: str, timeout: float = 2.0, ctx: ssl.SSLContext | None = None) -> 
     res["layers"]["tcp"] = "ok"
     if u.scheme == "https":
         try:
-            s = (ctx or ssl.create_default_context()).wrap_socket(s, server_hostname=host)
+            tls_ctx = ctx or ssl.create_default_context()
+            tls_ctx.minimum_version = ssl.TLSVersion.TLSv1_2  # never negotiate TLS 1.0/1.1
+            s = tls_ctx.wrap_socket(s, server_hostname=host)
             res["layers"]["tls"] = f"ok {s.version()}"
         except (OSError, ssl.SSLError) as e:
             s.close()

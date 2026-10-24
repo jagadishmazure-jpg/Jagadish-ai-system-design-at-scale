@@ -163,8 +163,7 @@ async def batching_benchmark(batch_size: int, n_requests: int = 256, arrival_gap
 
     t0 = time.perf_counter()
     srv = asyncio.create_task(server())
-    await client()
-    await srv
+    await asyncio.gather(client(), srv)
     wall = time.perf_counter() - t0
     from .observability import percentile
     return {"batch_size": batch_size, "p50_ms": round(percentile(lat, 50) * 1000, 2),

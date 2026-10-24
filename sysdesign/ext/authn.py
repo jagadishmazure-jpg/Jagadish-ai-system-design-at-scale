@@ -22,7 +22,9 @@ REFRESH_TTL_S = 14 * 24 * 3600
 
 
 def _h(raw: str) -> str:
-    return hashlib.sha256(raw.encode()).hexdigest()
+    """Lookup digest for high-entropy secrets (API keys, session ids, refresh tokens).
+    Deterministic so it can be an index key; PBKDF2 so a leaked table is costly to test guesses against."""
+    return hashlib.pbkdf2_hmac("sha256", raw.encode(), b"kestrel-secret-index", 1000).hex()
 
 
 class ApiKeyStore:

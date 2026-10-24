@@ -78,7 +78,7 @@ jobs:
         run: |
           curl -fsSLo tf.zip https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
           echo "186e0145f5e5f2eb97cbd785bc78f21bae4ef15119349f6ad4fa535b83b10df8  tf.zip" | sha256sum -c
-          unzip -q tf.zip && sudo mv terraform /usr/local/bin/
+          unzip -q -o tf.zip terraform -d "$RUNNER_TEMP" && sudo mv "$RUNNER_TEMP/terraform" /usr/local/bin/
       - run: terraform -chdir=terraform fmt -check -recursive
       - run: terraform -chdir=terraform init -backend=false -input=false && terraform -chdir=terraform validate
       - name: Bicep build (parity check, no deploy)

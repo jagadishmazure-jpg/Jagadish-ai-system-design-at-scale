@@ -1,5 +1,4 @@
 """Talk 14: auth methods by caller type. Depth lives in Jagadish-agent-auth-security; this stays slim."""
-import hashlib
 import time
 
 import fakeredis
@@ -17,6 +16,7 @@ from sysdesign.ext.authn import (
     MockOIDCProvider,
     RedisSessionStore,
     TokenService,
+    _h,
 )
 
 
@@ -51,7 +51,7 @@ def test_redis_sessions_survive_restart_memory_does_not():
     sid = RedisSessionStore(fakeredis.FakeRedis(server=server)).create("agent-7", ["support"])
     restarted = RedisSessionStore(fakeredis.FakeRedis(server=server))  # new process, same Redis
     assert restarted.get(sid)["user"] == "agent-7"
-    assert fakeredis.FakeRedis(server=server).ttl("sess:" + hashlib.sha256(sid.encode()).hexdigest()) > 0
+    assert fakeredis.FakeRedis(server=server).ttl("sess:" + _h(sid)) > 0
     mem = MemorySessionStore()
     msid = mem.create("agent-7", ["support"])
     assert MemorySessionStore().get(msid) is None  # restart = new dict = session gone
