@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**471 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**587 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 ## Who it is for
@@ -233,8 +233,8 @@ without a cost estimate first.
   Novel phrasings can get through, and the rule list needs owners.
 - `/v1/chat/stream` generates the full reply, then streams it. TTFT here
   measures time to the first SSE event, not true provider token streaming.
-- Commerce data is in-memory per process. In compose, the API and the workers
-  each hold their own copy of the fictional orders.
+- Commerce data (orders, refunds, credits, carts) is shared through Redis by
+  every API replica and worker. Only the in-process test mode keeps it in dicts.
 - The in-app 413 check buffers bodies sent without a length header. nginx's
   `client_max_body_size` is the real cap in front.
 - The load model schedules replica slots in arrival order, an approximation
@@ -261,6 +261,10 @@ without a cost estimate first.
 | Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
 | Talk 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
 | Talk 16: tail latency (fan-out math, slow-call breaker, per-dependency bulkheads, hedging, fallback ladder, deadline budget, evidence board) | Built, tested (simulated; [tail-latency.md](docs/tail-latency.md)) |
+| Talk 17: streaming through every hop (SSE ledger resume, truncated fallback, idle timeout, cancel propagation, real-nginx replay, evidence board) | Built, tested (real sockets, fake model; [streaming.md](docs/streaming.md)) |
+| Talk 17 add-ons: retry budget, in-flight duplicate wait, amplification; mean vs percentiles, partial pages; shared session state | Built, tested (simulated; [retries.md](docs/retries.md), [tail-latency.md](docs/tail-latency.md), [backend-evolution.md](docs/backend-evolution.md)) |
+| Commerce state (incl. carts) in Redis across replicas | Built, tested |
+| `StreamLedger` wired into `/v1/chat/stream` with a real provider stream; retry budget in the live gateway | Planned |
 | Talk 18: dated policy retrieval, freshness check, answer verifier + review queue, ops vs quality dashboards; network waterfall + delay proxy; event-loop stall replay, process-pool fix, thread/async/process experiments | Built, tested (A, B simulated; C measured; see [silent-failures](docs/silent-failures.md), [network-waterfall](docs/network-waterfall.md), [concurrency](docs/concurrency.md)) |
 | Talk 18 checks wired into the live `/v1/chat` path | Planned |
 | Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
@@ -318,6 +322,10 @@ A simulated replay of a fictional support assistant whose bill grew 3.11x while 
 
 A simulated replay of a moderation service that turned slow on 1% of calls: turn p99 went from 4.7s to 10.2s with no deploy and no traffic change. Calls in parallel cut the median but left p99 at 9.8s; adding a replica only delayed worker saturation by about 15s in a brownout. Hedging reads at p95 (4.2% extra calls) plus deadline-budget timeouts brought p99 to 4.3s, and a slow-call breaker plus a 12-slot moderation bulkhead kept the brownout from filling the workers. Details, evidence board and limits: [`docs/tail-latency.md`](docs/tail-latency.md).
 
+## Talk 17: streaming through every hop
+
+A fictional retail assistant showed a blank screen for 16 s and then the whole answer at once. The model was fine. The service and the gateway were both buffering. In a replay with a fake model (0.88 s to first token, 25 tok/s, 380 tokens) over real local sockets, the first token arrived at 16.05 s when buffered and 0.884 s when streamed end to end. Real nginx 1.26 with buffering on showed it at 5.48 s. A drop at token 140 resumed from the ledger with 380 tokens generated, against 532 when regenerating. Passing a closed tab's cancel upstream stopped generation at 166 tokens (214 saved). Retries, tail percentiles, partial pages and shared session state were added alongside. Details: [`docs/streaming.md`](docs/streaming.md), [`docs/retries.md`](docs/retries.md).
+
 ## Talk 18: silent failures, network waterfall, concurrency
 
 - **Stale answers on green dashboards (simulated, 400 answers).** The ops view showed 0 errors, p95 1.066s and 100% uptime both before and after the fix. Before, 304 answers quoted a superseded 60-day refund rule. Dated retrieval plus a verifier sent 0 stale, invented or PII answers, and routed 42 to human review (a verifier alone needed 313). [`docs/silent-failures.md`](docs/silent-failures.md)
@@ -331,6 +339,7 @@ A simulated replay of a moderation service that turned slow on 1% of calls: turn
 - [Jagadish-agent-reliability-lab](https://github.com/jagadishmazure-jpg/Jagadish-agent-reliability-lab): failure injection for agents. This repo covers the traffic side.
 - [Jagadish-agent-trace-observability](https://github.com/jagadishmazure-jpg/Jagadish-agent-trace-observability): deeper tracing and cost attribution.
 - [Jagadish-unified-retrieval-router](https://github.com/jagadishmazure-jpg/Jagadish-unified-retrieval-router): retrieval routing in depth.
+- [Jagadish-agent-commerce-streaming](https://github.com/jagadishmazure-jpg/Jagadish-agent-commerce-streaming): SSE agent UI with approve/reject and user cancel. This repo covers the gateway hops, resume and cancel propagation.
 - [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning): token-based capacity planning (separate talk).
 - [Jagadish-azure-finops](https://github.com/jagadishmazure-jpg/Jagadish-azure-finops): cached-rate prompt pricing in a FinOps context.
 - [Jagadish-pii-guard](https://github.com/jagadishmazure-jpg/Jagadish-pii-guard): PII detection in depth.
@@ -339,12 +348,12 @@ A simulated replay of a moderation service that turned slow on 1% of calls: turn
 
 ## Credits
 
-Patterns were prompted by 16 public talks on AI system design that the
+Patterns were prompted by 17 public talks (plus related ones folded into talk 17) on AI system design that the
 owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-471 tests collected
+587 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).

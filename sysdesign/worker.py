@@ -49,7 +49,7 @@ def main(argv) -> int:  # pragma: no cover - compose runtime only
             print(autoscale_tick(r, q, scalers, time.time()), flush=True)
             time.sleep(2)
     pool = argv[2]
-    shop = Commerce()
+    shop = Commerce(r)  # shared with the API replicas through Redis
     threads: list[threading.Event] = []
 
     def loop(stop: threading.Event, name: str):
