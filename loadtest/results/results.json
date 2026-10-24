@@ -1,0 +1,243 @@
+{
+  "_note": "Deterministic model run in virtual time with the repo's real components and fake providers. Not a hardware benchmark. Regenerate: python -m loadtest.harness",
+  "intent_router": {
+    "off_all_large_model": {
+      "cache_hit_rate": 0.0,
+      "cost_per_1k_requests_usd": 0.313681,
+      "cost_usd": 0.3187,
+      "error_rate": 0.0,
+      "p50_s": 1.205,
+      "p95_s": 1.669,
+      "p99_s": 5.395,
+      "paths": {
+        "large_model": {
+          "cost_per_request_usd": 0.00031368,
+          "cost_usd": 0.3187,
+          "requests": 1016
+        }
+      },
+      "rate_429": 0.0,
+      "requests": 1016
+    },
+    "on_ladder": {
+      "cache_hit_rate": 0.0,
+      "cost_per_1k_requests_usd": 0.02044,
+      "cost_usd": 0.020768,
+      "error_rate": 0.0,
+      "p50_s": 0.223,
+      "p95_s": 0.94,
+      "p99_s": 1.561,
+      "paths": {
+        "classifier": {
+          "cost_per_request_usd": 1.109e-05,
+          "cost_usd": 0.002729,
+          "requests": 246
+        },
+        "large_model": {
+          "cost_per_request_usd": 0.000225,
+          "cost_usd": 0.011925,
+          "requests": 53
+        },
+        "rules": {
+          "cost_per_request_usd": 0.0,
+          "cost_usd": 0.0,
+          "requests": 229
+        },
+        "small_model": {
+          "cost_per_request_usd": 1.253e-05,
+          "cost_usd": 0.006113,
+          "requests": 488
+        }
+      },
+      "rate_429": 0.0,
+      "requests": 1016
+    }
+  },
+  "provider_outage": {
+    "off_naive_retries": {
+      "breaker_transitions": 0,
+      "cache_hit_rate": 0.0,
+      "cost_per_1k_requests_usd": 0.008559,
+      "cost_usd": 0.009175,
+      "disrupted_seconds": 60,
+      "error_rate": 0.33,
+      "fallback_calls": 0,
+      "outage_window": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.0,
+        "cost_usd": 0.0,
+        "error_rate": 1.0,
+        "p50_s": null,
+        "p95_s": null,
+        "p99_s": null,
+        "rate_429": 0.0,
+        "requests": 354
+      },
+      "p50_s": 0.265,
+      "p95_s": 0.362,
+      "p99_s": 1.241,
+      "primary_calls": 1780,
+      "rate_429": 0.0,
+      "recovery_s_after_outage_end": 0.0,
+      "requests": 1072
+    },
+    "on_breaker_fallback": {
+      "breaker_transitions": 21,
+      "cache_hit_rate": 0.0,
+      "cost_per_1k_requests_usd": 0.014967,
+      "cost_usd": 0.016045,
+      "disrupted_seconds": 0,
+      "error_rate": 0.0,
+      "fallback_calls": 372,
+      "outage_window": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.019071,
+        "cost_usd": 0.006751,
+        "error_rate": 0.0,
+        "p50_s": 0.36,
+        "p95_s": 1.434,
+        "p99_s": 1.808,
+        "rate_429": 0.0,
+        "requests": 354
+      },
+      "p50_s": 0.292,
+      "p95_s": 0.497,
+      "p99_s": 1.666,
+      "primary_calls": 714,
+      "rate_429": 0.0,
+      "recovery_s_after_outage_end": 0.0,
+      "requests": 1072
+    }
+  },
+  "queue_and_autoscaling": {
+    "off_shared_fixed_2": {
+      "bulk_drain_time_s": 621.6,
+      "bulk_jobs": 610,
+      "dead_lettered": 0,
+      "interactive_jobs": 352,
+      "interactive_wait_max_s": 588.9,
+      "interactive_wait_p95_s": 585.4,
+      "peak_workers": {
+        "shared": 2
+      }
+    },
+    "on_bulkheads_autoscaled": {
+      "bulk_drain_time_s": 118.0,
+      "bulk_jobs": 610,
+      "dead_lettered": 0,
+      "interactive_jobs": 352,
+      "interactive_wait_max_s": 3.7,
+      "interactive_wait_p95_s": 1.9,
+      "peak_workers": {
+        "bulk": 12,
+        "interactive": 2
+      },
+      "scale_events": {
+        "bulk": 11,
+        "interactive": 3
+      }
+    }
+  },
+  "rate_limiting": {
+    "off": {
+      "abuser": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.119792,
+        "cost_usd": 0.200173,
+        "error_rate": 0.94,
+        "p50_s": 5.108,
+        "p95_s": 9.136,
+        "p99_s": 9.853,
+        "rate_429": 0.0,
+        "requests": 1671
+      },
+      "normal_users": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.009398,
+        "cost_usd": 0.007152,
+        "error_rate": 0.794,
+        "p50_s": 5.009,
+        "p95_s": 9.988,
+        "p99_s": 9.995,
+        "rate_429": 0.0,
+        "requests": 761
+      }
+    },
+    "on": {
+      "abuser": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.026314,
+        "cost_usd": 0.04397,
+        "error_rate": 0.0,
+        "p50_s": 1.227,
+        "p95_s": 1.891,
+        "p99_s": 5.589,
+        "rate_429": 0.929,
+        "requests": 1671
+      },
+      "normal_users": {
+        "cache_hit_rate": 0.0,
+        "cost_per_1k_requests_usd": 0.02481,
+        "cost_usd": 0.01888,
+        "error_rate": 0.0,
+        "p50_s": 0.238,
+        "p95_s": 1.271,
+        "p99_s": 1.634,
+        "rate_429": 0.0,
+        "requests": 761
+      }
+    }
+  },
+  "replica_failure": {
+    "off_no_health_checks": {
+      "cache_hit_rate": 0.965,
+      "cost_per_1k_requests_usd": 0.014042,
+      "cost_usd": 0.011992,
+      "error_rate": 0.214,
+      "p50_s": 0.012,
+      "p95_s": 0.954,
+      "p99_s": 1.588,
+      "rate_429": 0.0,
+      "requests": 854
+    },
+    "on_health_checked_lb": {
+      "cache_hit_rate": 0.973,
+      "cost_per_1k_requests_usd": 0.01823,
+      "cost_usd": 0.015568,
+      "error_rate": 0.005,
+      "p50_s": 0.012,
+      "p95_s": 1.141,
+      "p99_s": 1.608,
+      "rate_429": 0.0,
+      "requests": 854
+    }
+  },
+  "semantic_cache": {
+    "off": {
+      "cache_hit_rate": 0.0,
+      "cache_hits": 0,
+      "cost_per_1k_requests_usd": 0.013092,
+      "cost_usd": 0.012215,
+      "error_rate": 0.0,
+      "p50_s": 0.265,
+      "p95_s": 0.361,
+      "p99_s": 1.225,
+      "rate_429": 0.0,
+      "requests": 933,
+      "wrong_source_hits": 0
+    },
+    "on": {
+      "cache_hit_rate": 0.986,
+      "cache_hits": 774,
+      "cost_per_1k_requests_usd": 0.002683,
+      "cost_usd": 0.002504,
+      "error_rate": 0.0,
+      "p50_s": 0.012,
+      "p95_s": 0.296,
+      "p99_s": 0.347,
+      "rate_429": 0.0,
+      "requests": 933,
+      "wrong_source_hits": 0
+    }
+  }
+}

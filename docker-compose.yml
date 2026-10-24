@@ -1,0 +1,54 @@
+# Local only. First run: python scripts/dev_token.py (creates the shared dev key).
+# Free: no cloud resources. `docker compose up --build`, then call http://localhost:8080
+services:
+  gateway:
+    image: nginx:1.27-alpine
+    ports: ["8080:8080"]
+    volumes: ["./deploy/nginx.conf:/etc/nginx/nginx.conf:ro"]
+    depends_on: [api1, api2, api3]
+  api1: &api
+    build: .
+    environment: &env
+      REDIS_URL: redis://redis:6379/0
+      POSTGRES_DSN: postgresql://app:app@postgres:5432/app
+      REPLICA: r1
+      DEV_JWT_KEY_FILE: /keys/jwt.pem
+    volumes: ["./deploy/dev-keys:/keys:ro"]
+    depends_on: [redis, postgres]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 5s
+      retries: 2
+  api2:
+    <<: *api
+    environment: { <<: *env, REPLICA: r2 }
+  api3:
+    <<: *api
+    environment: { <<: *env, REPLICA: r3 }
+  autoscaler:
+    build: .
+    command: ["python", "-m", "sysdesign.worker", "autoscaler"]
+    environment: *env
+    depends_on: [redis, postgres]
+  worker-interactive:
+    build: .
+    command: ["python", "-m", "sysdesign.worker", "pool", "interactive"]
+    environment: *env
+    depends_on: [redis, postgres]
+  worker-bulk:
+    build: .
+    command: ["python", "-m", "sysdesign.worker", "pool", "bulk"]
+    environment: *env
+    depends_on: [redis, postgres]
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: app, POSTGRES_PASSWORD: app, POSTGRES_DB: app }
+  prometheus:
+    image: prom/prometheus:v3.4.0
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports: ["9090:9090"]
