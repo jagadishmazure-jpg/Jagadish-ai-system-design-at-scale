@@ -1,6 +1,6 @@
 # Talk 15: caching for LLM apps (part 1)
 
-Everything on this page is a **simulation** with illustrative prices (input $2.50, output $10.00 per 1M tokens, cached input at 10%, as of 2026-10) and a simulated prefill-time model. The numbers come from `python scripts/caching_bench.py` and `python scripts/evidence_board.py`; CI fails if the committed results drift from a fresh run. Source: a public talk on AI system design, credited by topic only and paraphrased in my own words.
+Everything on this page is a **simulation** with illustrative prices (input $2.50, output $10.00 per 1M tokens, cached input at 10%, as of 2026-10) and a simulated prefill-time model. The numbers come from `python scripts/caching_bench.py` `python scripts/evidence_board.py` and `python scripts/caching_after_board.py`; CI fails if the committed results drift from a fresh run. Source: a public talk on AI system design, credited by topic only and paraphrased in my own words.
 
 ## The story (fictional)
 
@@ -78,6 +78,18 @@ Browser cache (static assets) -> CDN (public pages) -> Redis (sessions, rate lim
 - Prices are illustrative.
 - The semantic layer found no extra hits on reworded questions (toy embedding).
 
+## After the fix: the second board
+
+![Caching after board](img/caching_after_board.png)
+
+Same simulated August traffic, timestamp first vs stable content first. Values come straight from `docs/results/caching.json` (copied into `docs/results/caching_after_board.json`, drift-checked in CI):
+
+- **Lower cost:** input $3,170 to $1,324 per day (-58.2%), total $3,952 to $2,106 per day, monthly bill $118,553 to $63,173.
+- **Faster replies:** first-token p50 0.826s to 0.454s, p95 0.945s to 0.567s.
+- **Hit rate:** requests with a hit 10.93% to 99.99%; input tokens served from cache 7.96% to 68.03%; busy seconds with no hit 2,524 to 0.
+
+Panel-by-panel notes: [dashboards.md, section 1b](dashboards.md#1b-caching-after-board-talk-15).
+
 ## Built vs planned
 
 | Item | Status |
@@ -86,5 +98,6 @@ Browser cache (static assets) -> CDN (public pages) -> Redis (sessions, rate lim
 | Multi-turn append / rewrite / summarise | Built, tested (simulated) |
 | Exact-match response cache, write-through embedding cache | Built, tested (fakeredis) |
 | Evidence board figure, drift-checked in CI | Built |
+| "After" evidence board (cost, first-token time, hit rate), drift-checked in CI | Built |
 | Measuring a real provider's cached-token counts | Planned |
 | Part 2 of the caching talk | Planned |

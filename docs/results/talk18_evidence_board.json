@@ -1,0 +1,124 @@
+{
+  "note": "Panels a, b and the waterfall chart: simulated (talk18.json). Panels c, d: measured on one machine (talk18_measured.json). Quoted hotel figure is from the source talk.",
+  "a_freshness": {
+    "before": {
+      "n": 400,
+      "ops_errors": 0,
+      "wrong_sent": {
+        "veracity": 31,
+        "freshness": 304,
+        "safety": 12
+      },
+      "sent_to_review": 0
+    },
+    "verifier_only": {
+      "n": 400,
+      "ops_errors": 0,
+      "wrong_sent": {
+        "veracity": 0,
+        "freshness": 0,
+        "safety": 0
+      },
+      "sent_to_review": 313
+    },
+    "after": {
+      "n": 400,
+      "ops_errors": 0,
+      "wrong_sent": {
+        "veracity": 0,
+        "freshness": 0,
+        "safety": 0
+      },
+      "sent_to_review": 42
+    }
+  },
+  "b_waterfall": {
+    "rows": {
+      "office": {
+        "total_ms": 108.0,
+        "server_share": 0.3704,
+        "phases_ms": {
+          "dns": 0.0,
+          "tcp": 10,
+          "tls": 10,
+          "request_rtt": 10,
+          "server": 40.0,
+          "transfer": 38.0
+        }
+      },
+      "hotel, cold": {
+        "total_ms": 2400.0,
+        "server_share": 0.0167,
+        "phases_ms": {
+          "dns": 800,
+          "tcp": 200,
+          "tls": 400,
+          "request_rtt": 200,
+          "server": 40.0,
+          "transfer": 760.0
+        }
+      },
+      "hotel, TLS 1.3 + DNS cached": {
+        "total_ms": 1400.0,
+        "server_share": 0.0286,
+        "phases_ms": {
+          "dns": 0.0,
+          "tcp": 200,
+          "tls": 200,
+          "request_rtt": 200,
+          "server": 40.0,
+          "transfer": 760.0
+        }
+      },
+      "hotel, warm connection": {
+        "total_ms": 1000.0,
+        "server_share": 0.04,
+        "phases_ms": {
+          "dns": 0.0,
+          "tcp": 0.0,
+          "tls": 0,
+          "request_rtt": 200,
+          "server": 40.0,
+          "transfer": 760.0
+        }
+      },
+      "hotel via edge (RTT 20ms, warm origin)": {
+        "total_ms": 500.0,
+        "server_share": 0.08,
+        "phases_ms": {
+          "dns": 0.0,
+          "tcp": 20,
+          "tls": 20,
+          "request_rtt": 20,
+          "edge_to_origin": 180,
+          "server": 40.0,
+          "transfer": 220.0
+        }
+      }
+    },
+    "quoted_hotel_ms": 1140
+  },
+  "c_loop_stall_ms": {
+    "idle": 0.3,
+    "inline": 2960.4,
+    "process_pool": 5.8,
+    "chat_ping_max_inline": 2965.8,
+    "chat_ping_max_pool": 5.7
+  },
+  "d_experiments_s": {
+    "io_threads": 1.037,
+    "io_asyncio": 0.073,
+    "cpu_serial": 1.496,
+    "cpu_threads": 1.542,
+    "cpu_asyncio": 1.53,
+    "cpu_processes": 0.24,
+    "processes": 8,
+    "process_speedup": 6.24
+  },
+  "machine": {
+    "cpu_count": 8,
+    "python": "3.13.5",
+    "gil_enabled": true,
+    "free_threaded_build": false
+  }
+}

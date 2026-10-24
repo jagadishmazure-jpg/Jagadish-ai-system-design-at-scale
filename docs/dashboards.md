@@ -7,11 +7,13 @@ Every evidence board in the portfolio, in one place. Each board is a single pict
 | Board | Repo | Status | What it shows |
 |---|---|---|---|
 | [Caching (talk 15)](#1-caching-board-talk-15) | this repo, `docs/img/evidence_board.png` | Merged | Why input tokens drove the bill, and how prompt order unlocks the prefix cache |
+| [Caching after the fix (talk 15)](#1b-caching-after-board-talk-15) | this repo, `docs/img/caching_after_board.png` | This PR | Lower cost, faster first token, higher hit rate after the prompt reorder |
 | [Tail latency (talk 16)](#2-tail-latency-board-talk-16) | this repo, `docs/img/tail_evidence_board.png` | Merged | How a 1% slow call grows with fan-out, and the deadline budget that caps it |
 | [Streaming (talk 17)](#3-streaming-board-talk-17) | this repo, `docs/img/stream_evidence_board.png` | Merged (PR #14) | Buffering hops, resume, retries, percentiles, stateless replicas |
 | [Talk 18 board](#4-talk-18-board) | this repo, `docs/img/talk18_evidence_board.png` | Merged (PR #15) | Silent wrong answers, page-load waterfall, event loop vs processes |
 | [Network waterfall (talk 18)](#5-network-waterfall-talk-18) | this repo, `docs/img/network_waterfall.png` | Merged (PR #15) | Where the time goes in one page load, per network path |
 | [Token accounting](#6-token-accounting-board) | [Jagadish-token-accounting](https://github.com/jagadishmazure-jpg/Jagadish-token-accounting/blob/main/docs/charts/evidence_board.png) | Merged | Real tokenizer counts, quick-rule error, where input tokens go |
+| [Capacity planning](#7-capacity-planning-board) | [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) | Open PR #8 in that repo | Same RPS, contract share vs bill, chat p99 and bill per scenario, the token exercise |
 
 Related charts that are single plots, not boards, are listed at the end.
 
@@ -43,7 +45,25 @@ Related charts that are single plots, not boards, are listed at the end.
 - **Takeaway:** the prefix cache only reuses a prompt that starts with exactly the same tokens. One timestamp on line one made every prompt new.
 - **Regenerate:** `python scripts/caching_bench.py && python scripts/evidence_board.py` (CI: `--check` on both).
 - **Interviews:** start a cost question by splitting input from output tokens, then ask what is identical between requests. Order the prompt from never-changes to changes-most.
-- **Note:** there is no separate "after" board image. The after-fix numbers are stored in the `after` block of the JSON and in caching.md, not drawn as a second PNG.
+- **After board:** the after-fix numbers are drawn as their own board in section 1b.
+
+## 1b. Caching after board (talk 15)
+
+![Caching after board](img/caching_after_board.png)
+
+- **For:** the same Kestrel incident, after the fix: stable content first, timestamp last. Write-up: [caching.md](caching.md).
+- **Numbers:** **simulated** replay of the same August traffic (8,571 calls per layout), illustrative prices. Every value is copied from `docs/results/caching.json` into `docs/results/caching_after_board.json`; only the percent changes are computed.
+
+| Panel | How to read it | Key numbers |
+|---|---|---|
+| (a) lower cost | Input and total $/day, before vs after | input $3,170 to $1,324 per day (-58.2%); total $3,952 to $2,106 per day (-46.7%); monthly bill $118,553 to $63,173 |
+| (b) faster replies | First-token time p50 and p95 | p50 0.826s to 0.454s (-45%); p95 0.945s to 0.567s (-40%) |
+| (c) hit rate | Share of requests with any cache hit, and share of input tokens served from cache | requests 10.93% to 99.99%; tokens 7.96% to 68.03%; busy seconds with no hit 2,524 to 0 (of 3,265) |
+| (d) cost curve | $ per turn as the token hit rate rises, with both runs marked | $0.0210 per turn at 0% hits, $0.0118 at 100%; before sits at 8.0%, after at 68.0% |
+
+- **Takeaway:** one change to prompt order, no new infrastructure, cut input cost by more than half and the median first token by almost half. The token hit rate stops at 68% because history and the question still change every turn.
+- **Regenerate:** `python scripts/caching_bench.py && python scripts/caching_after_board.py` (CI: `--check` on both).
+- **Interviews:** pair the before board with this one: symptom, cause, fix, and then the measured gain on the same traffic.
 
 ## 2. Tail latency board (talk 16)
 
@@ -100,7 +120,7 @@ Related charts that are single plots, not boards, are listed at the end.
 | (d) waiting vs CPU work | Seconds per method | 5,000 sleeps: threads 1.037s, asyncio 0.073s; 150 prime jobs: serial 1.496s, threads 1.542s, asyncio 1.53s, 8 processes 0.24s (6.24x) |
 
 - **Takeaway:** an ops dashboard can be fully green while answers are wrong, so quality needs its own view. For waiting, use async; for CPU work, only processes help under the GIL.
-- **Regenerate:** `python scripts/talk18_bench.py && python scripts/talk18_evidence_board.py` (measured file: `python scripts/talk18_bench.py --measure`, slow and machine-specific).
+- **Regenerate:** `python scripts/talk18_bench.py && python scripts/talk18_evidence_board.py` (measured file: `python scripts/talk18_bench.py --measure`, slow and machine-specific). CI runs `--check` on both: the board script writes every plotted number to `docs/results/talk18_evidence_board.json` and fails if it no longer matches `talk18.json` and `talk18_measured.json`.
 - **Interviews:** ask "who tells us an answer is wrong?" and "is this work waiting or computing?" before picking threads, async or processes.
 
 ## 5. Network waterfall (talk 18)
@@ -119,7 +139,7 @@ Related charts that are single plots, not boards, are listed at the end.
 
 - **Measured check:** through a local 100ms delay proxy, a TLS 1.2 handshake took 204.4ms and TLS 1.3 took 102.6ms (`talk18_measured.json`).
 - **Takeaway:** on a slow network, round trips dominate and the server is a thin slice; reuse connections and move them closer.
-- **Regenerate:** drawn by the same `python scripts/talk18_evidence_board.py` run.
+- **Regenerate:** drawn by the same `python scripts/talk18_evidence_board.py` run; its rows and phases are in the `b_waterfall` block of `docs/results/talk18_evidence_board.json`, which the same CI `--check` compares against `talk18.json`.
 - **Interviews:** draw the waterfall (DNS, TCP, TLS, request, transfer) before touching the server.
 
 ## 6. Token accounting board
@@ -139,8 +159,25 @@ Lives in another repo: [evidence_board.png](https://github.com/jagadishmazure-jp
 - **Regenerate:** in that repo, `pip install -e ".[dev,charts]" && tokacct chart`.
 - **Interviews:** budgets and rate limits must count tokens the way the provider bills them.
 
+## 7. Capacity planning board
+
+Lives in another repo: [evidence_board.png](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) ([evidence-board.md](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/evidence-board.md)). Added in [PR #8](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/pull/8) there; the links work once it is merged.
+
+- **For:** the talk on planning LLM capacity in tokens, not requests. Fictional Brightdesk assistant (Kestrel Lane Software). Panels (a)-(c) **simulated** (seeded planner and fleet simulator, illustrative prices); panel (d) inputs **measured** with the offline token counter on synthetic texts, outputs sampled; the 80x line is **quoted** from the talk. Source: that repo's `results.json`, copied into `docs/evidence_board.json` and drift-checked in its CI.
+
+| Panel | How to read it | Key numbers |
+|---|---|---|
+| (a) bill vs contract share | Bill multiplier and replicas as more requests paste whole contracts | 0%: 1.0x, 3 replicas; 12%: 29.2x, 47; 40%: 94.0x, 154; the talk's 80x falls between 30% and 40% |
+| (b) chat p99 per scenario | Log scale, 60 s at 100 RPS | launch 2.5s; incident 611.2s; fair share alone 90.3s; caps + fair share 3.7s on 3 replicas; 47-replica fleet 2.4s |
+| (c) monthly API bill per scenario | More replicas fix latency, not the bill | incident $519k; caps + fair share $78k; all fixes $47k; simulated month without fixes $398,601 (24.8x the estimate), drift alert on day 2 |
+| (d) the exercise | Average input vs output tokens per type, with output's cost share | chat output 91.6% of cost; contract Q&A 22.5%; summarization 20.0% |
+
+- **Takeaway:** the request rate never moved; tokens per request did. Plan in tokens per second, cap inputs and share capacity fairly.
+- **Regenerate:** in that repo, `pip install -e ".[dev,board]" && python scripts/evidence_board.py`.
+- **Interviews:** ask for the token distribution (mean and p99, input and output) before sizing anything in requests per second.
+
 ## Other charts (single plots, not boards)
 
 - Token accounting: [tokens per word](https://github.com/jagadishmazure-jpg/Jagadish-token-accounting/blob/main/docs/charts/tokens_per_word.png), [quick-rule error](https://github.com/jagadishmazure-jpg/Jagadish-token-accounting/blob/main/docs/charts/estimate_error.png) (the same data as the top two board panels).
-- Capacity planning: seven SVG charts in [Jagadish-llm-capacity-planning/docs/charts](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/tree/main/docs/charts) (token histograms per workload, chat p99 by scenario, bill multiplier by contract share). That repo has no combined evidence board; its own docs explain each chart.
+- Capacity planning: seven SVG charts in [Jagadish-llm-capacity-planning/docs/charts](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/tree/main/docs/charts) (token histograms per workload, chat p99 by scenario, bill multiplier by contract share). Its combined board is section 7.
 - Grafana: `deploy/grafana/provisioning/dashboards/kestrel.json` is a live-ops dashboard definition for the local stack, not a picture with results.
