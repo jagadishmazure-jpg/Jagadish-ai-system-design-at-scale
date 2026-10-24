@@ -17,6 +17,7 @@ out=$(curl -fsS -X POST http://localhost:8080/v1/chat -H "authorization: Bearer 
 echo "$out"
 echo "$out" | grep -q 'KG-100001' || { echo "unexpected chat reply"; exit 1; }
 job=$(curl -fsS -X POST http://localhost:8080/v1/refunds -H "authorization: Bearer $TOKEN" \
-  -H 'content-type: application/json' -H 'idempotency-key: smoke-1' -d '{"order_id":"KG-100002","amount":5}')
+  -H 'content-type: application/json' -H 'idempotency-key: smoke-refund-0001' -d '{"order_id":"KG-100002","amount":5}')
 echo "$job"
+echo "$job" | grep -q job_id || { echo "no job id"; exit 1; }
 echo "compose smoke passed"

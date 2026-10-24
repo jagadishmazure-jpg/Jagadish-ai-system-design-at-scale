@@ -47,3 +47,29 @@ def test_real_postgres_checkpoints():
     s.save("wf-int", 1, {"a": 1})
     s.save("wf-int", 2, {"a": 2}, "done")
     assert s.load("wf-int")["step"] == 2
+
+
+def test_real_postgres_concurrent_startup_does_not_race():
+    """Regression: replicas starting together raced on CREATE TABLE IF NOT EXISTS (seen in compose smoke)."""
+    if not pg:
+        pytest.skip("POSTGRES_DSN not set")
+    import threading
+
+    import psycopg
+
+    with psycopg.connect(pg, autocommit=True) as c:
+        c.execute("DROP TABLE IF EXISTS checkpoints")
+    errors = []
+
+    def start():
+        try:
+            CheckpointStore.postgres(pg)
+        except Exception as e:  # noqa: BLE001
+            errors.append(e)
+
+    threads = [threading.Thread(target=start) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert errors == []

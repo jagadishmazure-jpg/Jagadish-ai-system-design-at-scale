@@ -22,6 +22,10 @@ class CheckpointStore:
         self.conn = conn
         self.ph = "?" if paramstyle == "qmark" else "%s"
         cur = conn.cursor()
+        if paramstyle != "qmark":
+            # Several replicas start at once; serialise the DDL so concurrent CREATE TABLE IF NOT EXISTS
+            # calls cannot race on Postgres's catalog (a real failure seen in the compose smoke test).
+            cur.execute("SELECT pg_advisory_xact_lock(4242)")
         cur.execute(DDL)
         conn.commit()
 
