@@ -1,0 +1,231 @@
+{
+  "a_breakdown": {
+    "network_s": 0.08,
+    "queue_s": 0.2,
+    "prefill_s": 0.6,
+    "generation_s": 15.2,
+    "buffered_blank_s": 16.08,
+    "streamed_first_token_s": 0.88
+  },
+  "b_ttft_measured_s": {
+    "incident_service_and_gateway_buffered": 16.0503,
+    "service_streams_gateway_buffers": 16.0469,
+    "gateway_gzips_the_stream": 16.0472,
+    "streamed_end_to_end": 0.8838,
+    "nginx_buffering_on": 5.4838,
+    "nginx_buffering_off": 0.8841,
+    "nginx_gzip_on_stream": 0.8832,
+    "nginx_repo_rule": 0.8851,
+    "nginx_buffering_on_but_service_sends_x_accel_no": 0.8845
+  },
+  "b_scale": 1.0,
+  "c_reader_curve": [
+    {
+      "t": 0.0,
+      "shown": 0,
+      "read": 0
+    },
+    {
+      "t": 1.0,
+      "shown": 3,
+      "read": 0
+    },
+    {
+      "t": 2.0,
+      "shown": 28,
+      "read": 6
+    },
+    {
+      "t": 3.0,
+      "shown": 53,
+      "read": 11
+    },
+    {
+      "t": 4.0,
+      "shown": 78,
+      "read": 17
+    },
+    {
+      "t": 5.0,
+      "shown": 103,
+      "read": 22
+    },
+    {
+      "t": 6.0,
+      "shown": 128,
+      "read": 28
+    },
+    {
+      "t": 7.0,
+      "shown": 153,
+      "read": 33
+    },
+    {
+      "t": 8.0,
+      "shown": 178,
+      "read": 39
+    },
+    {
+      "t": 9.0,
+      "shown": 202,
+      "read": 44
+    },
+    {
+      "t": 10.0,
+      "shown": 227,
+      "read": 50
+    },
+    {
+      "t": 11.0,
+      "shown": 252,
+      "read": 55
+    },
+    {
+      "t": 12.0,
+      "shown": 278,
+      "read": 61
+    },
+    {
+      "t": 13.0,
+      "shown": 303,
+      "read": 66
+    },
+    {
+      "t": 14.0,
+      "shown": 328,
+      "read": 72
+    },
+    {
+      "t": 15.0,
+      "shown": 353,
+      "read": 77
+    },
+    {
+      "t": 16.0,
+      "shown": 378,
+      "read": 83
+    },
+    {
+      "t": 17.0,
+      "shown": 380,
+      "read": 88
+    },
+    {
+      "t": 18.0,
+      "shown": 380,
+      "read": 94
+    },
+    {
+      "t": 19.0,
+      "shown": 380,
+      "read": 99
+    },
+    {
+      "t": 20.0,
+      "shown": 380,
+      "read": 105
+    }
+  ],
+  "c_ratio": 4.55,
+  "d_drop": {
+    "resume_from_ledger": 380,
+    "regenerate": 532
+  },
+  "d_cancel": {
+    "propagated": 166,
+    "not_propagated": 380
+  },
+  "e_amplification_outage": {
+    "one": 3.0,
+    "one+budget": 1.1,
+    "all": 27.0,
+    "all+budget": 1.329
+  },
+  "f_distribution": {
+    "n": 100000,
+    "mean_ms": 90.0,
+    "p50_ms": 55.0,
+    "p90_ms": 196.3,
+    "p99_ms": 551.5,
+    "share_slower_than_mean": 0.3078
+  },
+  "f_quoted": {
+    "mean_ms": 90,
+    "p50_ms": 55,
+    "p99_ms": 543,
+    "source": "quoted from the talk; not measured here"
+  },
+  "g_page": {
+    "fanout": 100,
+    "pages": 2000,
+    "deadline_ms": 250.0,
+    "wait_for_all": {
+      "p50_ms": 625.7,
+      "p99_ms": 2196.2
+    },
+    "partial": {
+      "p50_ms": 250.0,
+      "p99_ms": 250.0
+    },
+    "parts_loading_mean": 6.28,
+    "parts_loading_p99": 12,
+    "pages_with_any_loading": 0.9975
+  },
+  "g_users_hit": [
+    {
+      "requests_per_session": 1,
+      "formula": 0.01,
+      "simulated": 0.0092
+    },
+    {
+      "requests_per_session": 10,
+      "formula": 0.0956,
+      "simulated": 0.0998
+    },
+    {
+      "requests_per_session": 50,
+      "formula": 0.395,
+      "simulated": 0.4032
+    },
+    {
+      "requests_per_session": 100,
+      "formula": 0.634,
+      "simulated": 0.6392
+    }
+  ],
+  "h_replica_dies": {
+    "memory": {
+      "logouts": 114,
+      "lost_cart_items": 184,
+      "lost_form_sections": 127
+    },
+    "sticky": {
+      "logouts": 29,
+      "lost_cart_items": 83,
+      "lost_form_sections": 62
+    },
+    "shared": {
+      "logouts": 0,
+      "lost_cart_items": 0,
+      "lost_form_sections": 0
+    }
+  },
+  "h_heavy_max_over_avg": {
+    "memory": 1.0,
+    "sticky": 1.846,
+    "shared": 1.0
+  },
+  "i_quoted_ab": {
+    "model_a": {
+      "tok_s": 25,
+      "abandonment": 0.38,
+      "quality_delta": 0
+    },
+    "model_b": {
+      "tok_s": 50,
+      "abandonment": 0.22,
+      "quality_delta": -6
+    },
+    "source": "quoted from the talk; not measured in this repo"
+  }
+}

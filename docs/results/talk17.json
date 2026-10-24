@@ -1,0 +1,510 @@
+{
+  "streaming": {
+    "note": "arithmetic from the story's settings; abandonment and quality are quoted",
+    "breakdown": {
+      "network_s": 0.08,
+      "queue_s": 0.2,
+      "prefill_s": 0.6,
+      "generation_s": 15.2,
+      "buffered_blank_s": 16.08,
+      "streamed_first_token_s": 0.88
+    },
+    "answer_times_s": {
+      "120": 5.68,
+      "380": 16.08,
+      "1000": 40.88
+    },
+    "model_over_reader": 4.55,
+    "faster_model_over_reader": 9.09,
+    "reader_curve": [
+      {
+        "t": 0.0,
+        "shown": 0,
+        "read": 0
+      },
+      {
+        "t": 1.0,
+        "shown": 3,
+        "read": 0
+      },
+      {
+        "t": 2.0,
+        "shown": 28,
+        "read": 6
+      },
+      {
+        "t": 3.0,
+        "shown": 53,
+        "read": 11
+      },
+      {
+        "t": 4.0,
+        "shown": 78,
+        "read": 17
+      },
+      {
+        "t": 5.0,
+        "shown": 103,
+        "read": 22
+      },
+      {
+        "t": 6.0,
+        "shown": 128,
+        "read": 28
+      },
+      {
+        "t": 7.0,
+        "shown": 153,
+        "read": 33
+      },
+      {
+        "t": 8.0,
+        "shown": 178,
+        "read": 39
+      },
+      {
+        "t": 9.0,
+        "shown": 202,
+        "read": 44
+      },
+      {
+        "t": 10.0,
+        "shown": 227,
+        "read": 50
+      },
+      {
+        "t": 11.0,
+        "shown": 252,
+        "read": 55
+      },
+      {
+        "t": 12.0,
+        "shown": 278,
+        "read": 61
+      },
+      {
+        "t": 13.0,
+        "shown": 303,
+        "read": 66
+      },
+      {
+        "t": 14.0,
+        "shown": 328,
+        "read": 72
+      },
+      {
+        "t": 15.0,
+        "shown": 353,
+        "read": 77
+      },
+      {
+        "t": 16.0,
+        "shown": 378,
+        "read": 83
+      },
+      {
+        "t": 17.0,
+        "shown": 380,
+        "read": 88
+      },
+      {
+        "t": 18.0,
+        "shown": 380,
+        "read": 94
+      },
+      {
+        "t": 19.0,
+        "shown": 380,
+        "read": 99
+      },
+      {
+        "t": 20.0,
+        "shown": 380,
+        "read": 105
+      }
+    ],
+    "quoted_ab": {
+      "model_a": {
+        "tok_s": 25,
+        "abandonment": 0.38,
+        "quality_delta": 0
+      },
+      "model_b": {
+        "tok_s": 50,
+        "abandonment": 0.22,
+        "quality_delta": -6
+      },
+      "source": "quoted from the talk; not measured in this repo"
+    },
+    "transports": [
+      {
+        "name": "long_polling",
+        "direction": "client asks repeatedly",
+        "plain_http": true,
+        "sticky_or_broker": false,
+        "builtin_resume": false,
+        "latency": "bounded by the poll interval, not the model"
+      },
+      {
+        "name": "websocket",
+        "direction": "two-way",
+        "plain_http": false,
+        "sticky_or_broker": true,
+        "builtin_resume": false,
+        "latency": "per token, but the upstream half is unused for a chat answer"
+      },
+      {
+        "name": "sse",
+        "direction": "server to client",
+        "plain_http": true,
+        "sticky_or_broker": false,
+        "builtin_resume": true,
+        "latency": "per token; Last-Event-ID resumes after a drop"
+      }
+    ],
+    "turns_per_hour": 1200
+  },
+  "retries": {
+    "note": "simulated: seeded failures, virtual clock",
+    "budget_at_400_rpm": 40,
+    "amplification": [
+      {
+        "fail_rate": 0.05,
+        "retry_layers": "one",
+        "budget_ratio": null,
+        "calls_per_click": 1.045,
+        "success_rate": 1.0,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 0.05,
+        "retry_layers": "one",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.045,
+        "success_rate": 0.9998,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 0.05,
+        "retry_layers": "all",
+        "budget_ratio": null,
+        "calls_per_click": 1.045,
+        "success_rate": 1.0,
+        "worst_case_calls": 27
+      },
+      {
+        "fail_rate": 0.05,
+        "retry_layers": "all",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.045,
+        "success_rate": 0.9998,
+        "worst_case_calls": 27
+      },
+      {
+        "fail_rate": 0.2,
+        "retry_layers": "one",
+        "budget_ratio": null,
+        "calls_per_click": 1.226,
+        "success_rate": 0.9932,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 0.2,
+        "retry_layers": "one",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.098,
+        "success_rate": 0.8925,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 0.2,
+        "retry_layers": "all",
+        "budget_ratio": null,
+        "calls_per_click": 1.235,
+        "success_rate": 1.0,
+        "worst_case_calls": 27
+      },
+      {
+        "fail_rate": 0.2,
+        "retry_layers": "all",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.233,
+        "success_rate": 0.9988,
+        "worst_case_calls": 27
+      },
+      {
+        "fail_rate": 1.0,
+        "retry_layers": "one",
+        "budget_ratio": null,
+        "calls_per_click": 3.0,
+        "success_rate": 0.0,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 1.0,
+        "retry_layers": "one",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.1,
+        "success_rate": 0.0,
+        "worst_case_calls": 3
+      },
+      {
+        "fail_rate": 1.0,
+        "retry_layers": "all",
+        "budget_ratio": null,
+        "calls_per_click": 27.0,
+        "success_rate": 0.0,
+        "worst_case_calls": 27
+      },
+      {
+        "fail_rate": 1.0,
+        "retry_layers": "all",
+        "budget_ratio": 0.1,
+        "calls_per_click": 1.329,
+        "success_rate": 0.0,
+        "worst_case_calls": 27
+      }
+    ],
+    "quoted": {
+      "value": 1.1,
+      "source": "quoted from the talk; not measured here"
+    }
+  },
+  "tail_extras": {
+    "note": "simulated lognormal latencies, seeded",
+    "distribution": {
+      "n": 100000,
+      "mean_ms": 90.0,
+      "p50_ms": 55.0,
+      "p90_ms": 196.3,
+      "p99_ms": 551.5,
+      "share_slower_than_mean": 0.3078
+    },
+    "quoted": {
+      "mean_ms": 90,
+      "p50_ms": 55,
+      "p99_ms": 543,
+      "source": "quoted from the talk; not measured here"
+    },
+    "users_hit_p99": [
+      {
+        "requests_per_session": 1,
+        "formula": 0.01,
+        "simulated": 0.0092
+      },
+      {
+        "requests_per_session": 10,
+        "formula": 0.0956,
+        "simulated": 0.0998
+      },
+      {
+        "requests_per_session": 50,
+        "formula": 0.395,
+        "simulated": 0.4032
+      },
+      {
+        "requests_per_session": 100,
+        "formula": 0.634,
+        "simulated": 0.6392
+      }
+    ],
+    "page": {
+      "fanout": 100,
+      "pages": 2000,
+      "deadline_ms": 250.0,
+      "wait_for_all": {
+        "p50_ms": 625.7,
+        "p99_ms": 2196.2
+      },
+      "partial": {
+        "p50_ms": 250.0,
+        "p99_ms": 250.0
+      },
+      "parts_loading_mean": 6.28,
+      "parts_loading_p99": 12,
+      "pages_with_any_loading": 0.9975
+    }
+  },
+  "stateless": {
+    "note": "simulated sessions, seeded; 3 replicas",
+    "plain": [
+      {
+        "setup": "memory",
+        "requests": 720,
+        "logouts": 118,
+        "lost_cart_items": 195,
+        "lost_form_sections": 136,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          240,
+          240,
+          240
+        ],
+        "max_over_avg": 1.0
+      },
+      {
+        "setup": "sticky",
+        "requests": 720,
+        "logouts": 0,
+        "lost_cart_items": 0,
+        "lost_form_sections": 0,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          216,
+          348,
+          156
+        ],
+        "max_over_avg": 1.45
+      },
+      {
+        "setup": "shared",
+        "requests": 720,
+        "logouts": 0,
+        "lost_cart_items": 0,
+        "lost_form_sections": 0,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          240,
+          240,
+          240
+        ],
+        "max_over_avg": 1.0
+      }
+    ],
+    "replica_dies": [
+      {
+        "setup": "memory",
+        "requests": 720,
+        "logouts": 114,
+        "lost_cart_items": 184,
+        "lost_form_sections": 127,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          300,
+          120,
+          300
+        ],
+        "max_over_avg": 1.25
+      },
+      {
+        "setup": "sticky",
+        "requests": 720,
+        "logouts": 29,
+        "lost_cart_items": 83,
+        "lost_form_sections": 62,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          306,
+          174,
+          240
+        ],
+        "max_over_avg": 1.275
+      },
+      {
+        "setup": "shared",
+        "requests": 720,
+        "logouts": 0,
+        "lost_cart_items": 0,
+        "lost_form_sections": 0,
+        "cart_items_added": 397,
+        "form_sections_filled": 263,
+        "served": [
+          300,
+          120,
+          300
+        ],
+        "max_over_avg": 1.25
+      }
+    ],
+    "heavy_user": [
+      {
+        "setup": "memory",
+        "requests": 468,
+        "logouts": 58,
+        "lost_cart_items": 131,
+        "lost_form_sections": 106,
+        "cart_items_added": 272,
+        "form_sections_filled": 166,
+        "served": [
+          156,
+          156,
+          156
+        ],
+        "max_over_avg": 1.0
+      },
+      {
+        "setup": "sticky",
+        "requests": 468,
+        "logouts": 0,
+        "lost_cart_items": 0,
+        "lost_form_sections": 0,
+        "cart_items_added": 272,
+        "form_sections_filled": 166,
+        "served": [
+          108,
+          288,
+          72
+        ],
+        "max_over_avg": 1.846
+      },
+      {
+        "setup": "shared",
+        "requests": 468,
+        "logouts": 0,
+        "lost_cart_items": 0,
+        "lost_form_sections": 0,
+        "cart_items_added": 272,
+        "form_sections_filled": 166,
+        "served": [
+          156,
+          156,
+          156
+        ],
+        "max_over_avg": 1.0
+      }
+    ],
+    "counter": [
+      {
+        "setup": "memory",
+        "values_returned": [
+          1,
+          1,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3
+        ],
+        "final": 3,
+        "per_replica": [
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "setup": "shared",
+        "values_returned": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "final": 9,
+        "per_replica": null
+      }
+    ]
+  }
+}
