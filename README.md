@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**292 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**360 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 ## Who it is for
@@ -258,6 +258,7 @@ without a cost estimate first.
 | docker compose (nginx, 3 replicas, Redis, Postgres, workers, autoscaler, Prometheus) | Built; smoke-tested in CI only (not run on the author's machine) |
 | Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
 | Talk 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
+| Talk 16: tail latency (fan-out math, slow-call breaker, per-dependency bulkheads, hedging, fallback ladder, deadline budget, evidence board) | Built, tested (simulated; [tail-latency.md](docs/tail-latency.md)) |
 | Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
 | Per-user share inside the model-call cap | Built, tested ([pitfalls](docs/pitfalls.md)) |
 | k8s manifests, zero-downtime rollout and broken-release halt on kind | Built; run for real in CI (`image-and-kind-rollout`) |
@@ -299,6 +300,10 @@ per lookup); the reranker added about 4 ms and no hit@1 gain, so it is off.
 
 A simulated replay of a fictional support assistant whose bill grew 3.11x while traffic grew 1.3x: a timestamp at the start of the prompt meant the provider's prompt cache never matched. Moving the stable parts first cut input cost 58.2% and simulated median TTFT from 0.826s to 0.454s. Details, evidence board and limits: [`docs/caching.md`](docs/caching.md).
 
+## Talk 16: tail latency and resilience
+
+A simulated replay of a moderation service that turned slow on 1% of calls: turn p99 went from 4.7s to 10.2s with no deploy and no traffic change. Calls in parallel cut the median but left p99 at 9.8s; adding a replica only delayed worker saturation by about 15s in a brownout. Hedging reads at p95 (4.2% extra calls) plus deadline-budget timeouts brought p99 to 4.3s, and a slow-call breaker plus a 12-slot moderation bulkhead kept the brownout from filling the workers. Details, evidence board and limits: [`docs/tail-latency.md`](docs/tail-latency.md).
+
 ## Related repos
 
 - [Jagadish-agent-reliability-lab](https://github.com/jagadishmazure-jpg/Jagadish-agent-reliability-lab): failure injection for agents. This repo covers the traffic side.
@@ -312,12 +317,12 @@ A simulated replay of a fictional support assistant whose bill grew 3.11x while 
 
 ## Credits
 
-Patterns were prompted by 15 public talks on AI system design that the
+Patterns were prompted by 16 public talks on AI system design that the
 owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-292 tests collected
+360 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).
