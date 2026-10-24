@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quillmoor-api-config
+data:
+  BIND: "0.0.0.0"
+  LOG_LEVEL: info

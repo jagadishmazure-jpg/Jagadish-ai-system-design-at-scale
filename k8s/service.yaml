@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quillmoor-api
+spec:
+  selector: {app: quillmoor-api}
+  ports: [{port: 80, targetPort: http, name: http}]

@@ -1,0 +1,62 @@
+# Local stack. Three segmented networks:
+#   edge: nginx only (published port)   app: nginx <-> api replicas <-> worker   data: api <-> redis/postgres/minio
+# nginx is NOT on the data network, so the edge cannot reach the databases (scripts/segmentation_check.sh).
+name: quillmoor-support
+x-api: &api
+  build: .
+  environment:
+    REDIS_URL: redis://redis:6379/0
+    DATABASE_URL: postgresql://support:support@postgres:5432/support
+    OBJECT_STORE_URL: http://minio:9000
+    BIND: 0.0.0.0
+  networks: [app, data]
+  depends_on: [redis, postgres]
+  healthcheck:
+    test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/readyz')"]
+    interval: 5s
+    retries: 5
+services:
+  api-1: { <<: *api, environment: { REDIS_URL: "redis://redis:6379/0", DATABASE_URL: "postgresql://support:support@postgres:5432/support", REPLICA: api-1, BIND: 0.0.0.0 } }
+  api-2: { <<: *api, environment: { REDIS_URL: "redis://redis:6379/0", DATABASE_URL: "postgresql://support:support@postgres:5432/support", REPLICA: api-2, BIND: 0.0.0.0 } }
+  api-3: { <<: *api, environment: { REDIS_URL: "redis://redis:6379/0", DATABASE_URL: "postgresql://support:support@postgres:5432/support", REPLICA: api-3, BIND: 0.0.0.0 } }
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["8443:443"]
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/certs:/etc/nginx/certs:ro   # created by scripts/dev_certs.sh (self-signed, git-ignored)
+    networks: [edge, app]
+    depends_on: [api-1, api-2, api-3]
+  redis:
+    image: redis:7-alpine
+    networks: [data]
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: support, POSTGRES_PASSWORD: support, POSTGRES_DB: support }
+    networks: [data]
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    command: server /data
+    environment: { MINIO_ROOT_USER: devonly, MINIO_ROOT_PASSWORD: devonly-change-me }
+    networks: [data]
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    networks: [app]
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana:11.3.0
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks: [app]
+    ports: ["3000:3000"]
+  otel-collector:
+    image: otel/opentelemetry-collector:0.112.0
+    volumes: ["./deploy/otel/collector.yaml:/etc/otelcol/config.yaml:ro"]
+    networks: [app]
+networks:
+  edge: {}
+  app: { internal: true }
+  data: { internal: true }

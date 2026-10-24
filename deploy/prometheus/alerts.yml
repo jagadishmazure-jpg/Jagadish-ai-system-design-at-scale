@@ -1,0 +1,17 @@
+groups:
+  - name: support-agent-slo
+    rules:
+      - alert: HighErrorRate
+        # same threshold and minimum traffic as sysdesign/release.py (unit-tested)
+        expr: |
+          sum(rate(requests_total{status=~"5.."}[5m])) / sum(rate(requests_total[5m])) > 0.01
+          and sum(increase(requests_total[5m])) >= 50
+        for: 2m
+        labels: { severity: page, action: revert_last_release }
+        annotations:
+          summary: "Error rate above 1% for 2m"
+          runbook: "docs/DEVOPS_JOURNEY.md#8-rollback - git revert the deploy/version.yaml commit"
+      - alert: LatencySLOBurn
+        expr: histogram_quantile(0.95, sum(rate(request_latency_seconds_bucket[5m])) by (le)) > 2.5
+        for: 5m
+        labels: { severity: ticket }

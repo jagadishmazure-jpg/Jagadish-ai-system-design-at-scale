@@ -1,0 +1,8 @@
+receivers: { otlp: { protocols: { grpc: {}, http: {} } } }
+processors:
+  batch: {}
+  attributes/redact:                     # defence in depth: drop raw prompt attributes if any slip through
+    actions: [{ key: gen_ai.prompt, action: delete }, { key: gen_ai.completion, action: delete }]
+exporters: { debug: { verbosity: basic } }
+service:
+  pipelines: { traces: { receivers: [otlp], processors: [attributes/redact, batch], exporters: [debug] } }
