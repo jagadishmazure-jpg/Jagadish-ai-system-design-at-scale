@@ -1,0 +1,79 @@
+{
+  "note": "Simulated incident replay (August traffic, same turns), illustrative prices. Copied from docs/results/caching.json; nothing recomputed except the percent changes.",
+  "before_timestamp_first": {
+    "input_cost_per_day_usd": 3170.08,
+    "cost_per_day_usd": 3951.75,
+    "monthly_bill_usd": 118553.0,
+    "ttft_p50_s": 0.826,
+    "ttft_p95_s": 0.945,
+    "request_hit_rate": 0.1093,
+    "token_hit_rate": 0.0796,
+    "seconds_with_traffic": 3265,
+    "seconds_with_zero_hits": 2524,
+    "calls": 8571
+  },
+  "after_stable_first": {
+    "input_cost_per_day_usd": 1324.09,
+    "cost_per_day_usd": 2105.77,
+    "monthly_bill_usd": 63173.0,
+    "ttft_p50_s": 0.454,
+    "ttft_p95_s": 0.567,
+    "request_hit_rate": 0.9999,
+    "token_hit_rate": 0.6803,
+    "seconds_with_traffic": 3265,
+    "seconds_with_zero_hits": 0,
+    "calls": 8571
+  },
+  "change": {
+    "input_cost_reduction": 0.5823,
+    "total_cost_per_day_reduction": 0.4671,
+    "ttft_p50_reduction": 0.4504,
+    "ttft_p95_reduction": 0.4
+  },
+  "cost_curve": [
+    {
+      "hit_rate": 0.0,
+      "cost_usd": 0.02105
+    },
+    {
+      "hit_rate": 0.1,
+      "cost_usd": 0.020128
+    },
+    {
+      "hit_rate": 0.2,
+      "cost_usd": 0.019207
+    },
+    {
+      "hit_rate": 0.3,
+      "cost_usd": 0.018285
+    },
+    {
+      "hit_rate": 0.4,
+      "cost_usd": 0.017364
+    },
+    {
+      "hit_rate": 0.5,
+      "cost_usd": 0.016442
+    },
+    {
+      "hit_rate": 0.6,
+      "cost_usd": 0.01552
+    },
+    {
+      "hit_rate": 0.7,
+      "cost_usd": 0.014599
+    },
+    {
+      "hit_rate": 0.8,
+      "cost_usd": 0.013677
+    },
+    {
+      "hit_rate": 0.9,
+      "cost_usd": 0.012756
+    },
+    {
+      "hit_rate": 1.0,
+      "cost_usd": 0.011834
+    }
+  ]
+}

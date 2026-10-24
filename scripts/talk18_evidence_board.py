@@ -2,7 +2,9 @@
 
 Reads docs/results/talk18.json (simulated, drift-checked) and docs/results/talk18_measured.json (measured
 on one machine). Writes docs/img/talk18_evidence_board.png and docs/img/network_waterfall.png.
---check only re-renders into a temp file (PNG bytes vary by font/platform).
+Also writes docs/results/talk18_evidence_board.json: every number the two figures draw, copied from the two
+results files. --check re-renders into temp files and fails if that JSON drifts from the results files
+(PNG bytes vary by font/platform, so the JSON is what is compared).
 """
 from __future__ import annotations
 
@@ -15,6 +17,7 @@ SIM = ROOT / "docs/results/talk18.json"
 MEAS = ROOT / "docs/results/talk18_measured.json"
 BOARD = ROOT / "docs/img/talk18_evidence_board.png"
 WATERFALL = ROOT / "docs/img/network_waterfall.png"
+JSON = ROOT / "docs/results/talk18_evidence_board.json"
 PHASE_COLOURS = {"dns": "#8da0cb", "tcp": "#66c2a5", "tls": "#e78ac3", "request_rtt": "#a6d854",
                  "edge_to_origin": "#ffd92f", "server": "#d62728", "transfer": "#fc8d62"}
 
@@ -126,15 +129,47 @@ def draw(sim: dict, meas: dict, board: pathlib.Path, waterfall_png: pathlib.Path
         plt.close(fig)
 
 
+def numbers(sim: dict, meas: dict) -> dict:
+    """Every value the board and the waterfall chart plot, copied (not recomputed) from the results files."""
+    f = sim["freshness"]
+    wf = sim["waterfall"]
+    ri, rp = meas["replay_inline"], meas["replay_process_pool"]
+    io, cpu = meas["io_experiment"], meas["cpu_experiment"]
+    return {
+        "note": "Panels a, b and the waterfall chart: simulated (talk18.json). Panels c, d: measured on one machine "
+                "(talk18_measured.json). Quoted hotel figure is from the source talk.",
+        "a_freshness": {k: {"n": f[k]["n"], "ops_errors": round(f[k]["ops"]["error_rate"] * f[k]["n"]),
+                            "wrong_sent": f[k]["wrong_sent"], "sent_to_review": f[k]["sent_to_review"]}
+                        for k in ("before", "verifier_only", "after")},
+        "b_waterfall": {"rows": {name: {"total_ms": r["total_ms"], "server_share": r["server_share"],
+                                        "phases_ms": r["phases_ms"]} for name, r in wf["rows"].items()},
+                        "quoted_hotel_ms": wf["quoted"]["hotel_ms"]},
+        "c_loop_stall_ms": {"idle": ri["idle_loop"]["max_stall_ms"], "inline": ri["during_uploads"]["max_stall_ms"],
+                            "process_pool": rp["during_uploads"]["max_stall_ms"],
+                            "chat_ping_max_inline": ri["chat_ping_ms"]["max"],
+                            "chat_ping_max_pool": rp["chat_ping_ms"]["max"]},
+        "d_experiments_s": {"io_threads": io["thread_pool_s"], "io_asyncio": io["asyncio_s"],
+                            "cpu_serial": cpu["serial_s"], "cpu_threads": cpu["threads_s"],
+                            "cpu_asyncio": cpu["asyncio_s"], "cpu_processes": cpu["process_pool_s"],
+                            "processes": cpu["processes"], "process_speedup": cpu["process_speedup"]},
+        "machine": meas["machine"],
+    }
+
+
 def main(argv) -> int:
     sim, meas = json.loads(SIM.read_text()), json.loads(MEAS.read_text())
+    js = json.dumps(numbers(sim, meas), indent=2) + "\n"
     if "--check" in argv:
         a, b = ROOT / "t18_board.check.png", ROOT / "t18_wf.check.png"
         draw(sim, meas, a, b)
         a.unlink()
         b.unlink()
-        print("talk 18 figures render")
+        if not JSON.exists() or JSON.read_text() != js:
+            print("drift: docs/results/talk18_evidence_board.json - run python scripts/talk18_evidence_board.py")
+            return 1
+        print("talk 18 board and waterfall numbers up to date; figures render")
         return 0
+    JSON.write_text(js)
     draw(sim, meas, BOARD, WATERFALL)
     print(f"wrote {BOARD.relative_to(ROOT)} and {WATERFALL.relative_to(ROOT)}")
     return 0

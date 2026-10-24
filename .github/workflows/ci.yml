@@ -30,7 +30,9 @@ jobs:
       - name: README and capacity numbers match the results and test count
         run: python scripts/render_docs.py --check
       - name: Talk 15 caching results and evidence board match a fresh run
-        run: python scripts/caching_bench.py --check && python scripts/evidence_board.py --check && python scripts/tail_latency_bench.py --check && python scripts/tail_evidence_board.py --check
+        run: python scripts/caching_bench.py --check && python scripts/evidence_board.py --check && python scripts/tail_latency_bench.py --check && python scripts/tail_evidence_board.py --check && python scripts/caching_after_board.py --check
+      - name: Talk 18 results, evidence board and network waterfall match the committed results
+        run: python scripts/talk18_bench.py --check && python scripts/talk18_evidence_board.py --check
       - name: Talk 17 results and evidence board match a fresh run
         run: python scripts/talk17_bench.py --check && python scripts/stream_evidence_board.py --check
       - name: Interview docs match the envelope calculator
