@@ -39,6 +39,8 @@ jobs:
         run: python scripts/render_interview.py --check
       - name: No real brand names in code or docs
         run: python scripts/check_brands.py
+      - name: Hallucination-control results, doc tables and evidence board match a fresh run
+        run: python scripts/hallucination_bench.py --check && python scripts/hallucination_board.py --check
 
   integration:
     runs-on: ubuntu-latest

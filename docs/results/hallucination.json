@@ -1,0 +1,587 @@
+{
+  "note": "simulation: seeded fake model with invented failure rates, fictional store; every number is an exact count on the labelled set, not a production measurement",
+  "question_set": {
+    "answerable": 14,
+    "unanswerable": 10,
+    "stale": 6
+  },
+  "seeds": 20,
+  "ladder": [
+    {
+      "config": "0 incident: undated index, plain prompt, no checks",
+      "trials": 600,
+      "wrong_to_customer": 0.6133,
+      "wrong_to_customer_count": 368,
+      "held_back_rate": 0.2667,
+      "abstain_rate": 0.2667,
+      "review_rate": 0.0,
+      "false_abstain_rate": 0.2143,
+      "correct_sent_rate": 0.12,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_wrong": 148,
+          "abstain": 60,
+          "sent_ok": 72
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 100,
+          "sent_wrong": 100
+        },
+        "stale": {
+          "n": 120,
+          "sent_wrong": 120
+        }
+      }
+    },
+    {
+      "config": "1 talk 18: dated retrieval + verifier + review queue",
+      "trials": 600,
+      "wrong_to_customer": 0.0933,
+      "wrong_to_customer_count": 56,
+      "held_back_rate": 0.375,
+      "abstain_rate": 0.2667,
+      "review_rate": 0.1083,
+      "false_abstain_rate": 0.2464,
+      "correct_sent_rate": 0.5317,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 203,
+          "review": 9,
+          "abstain": 60,
+          "sent_wrong": 8
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 100,
+          "review": 53,
+          "sent_wrong": 47
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 116,
+          "review": 3,
+          "sent_wrong": 1
+        }
+      }
+    },
+    {
+      "config": "2 + 'I don't know' few-shot prompt + JSON schema",
+      "trials": 600,
+      "wrong_to_customer": 0.0483,
+      "wrong_to_customer_count": 29,
+      "held_back_rate": 0.4233,
+      "abstain_rate": 0.3917,
+      "review_rate": 0.0317,
+      "false_abstain_rate": 0.2429,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "review": 8,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 175,
+          "sent_wrong": 20,
+          "review": 5
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "review": 6,
+          "sent_wrong": 5
+        }
+      }
+    },
+    {
+      "config": "3 + retrieval score >= 0.5, else abstain",
+      "trials": 600,
+      "wrong_to_customer": 0.015,
+      "wrong_to_customer_count": 9,
+      "held_back_rate": 0.4567,
+      "abstain_rate": 0.4333,
+      "review_rate": 0.0233,
+      "false_abstain_rate": 0.2429,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 0.567,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "review": 8,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "review": 6,
+          "sent_wrong": 5
+        }
+      }
+    },
+    {
+      "config": "4 + citation enforcement",
+      "trials": 600,
+      "wrong_to_customer": 0.0133,
+      "wrong_to_customer_count": 8,
+      "held_back_rate": 0.5133,
+      "abstain_rate": 0.4333,
+      "review_rate": 0.08,
+      "false_abstain_rate": 0.325,
+      "correct_sent_rate": 0.4733,
+      "cost_multiplier": 0.567,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 185,
+          "review": 31,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 99,
+          "review": 17,
+          "sent_wrong": 4
+        }
+      }
+    },
+    {
+      "config": "5 + log-prob gate (min token >= -1.0)",
+      "trials": 600,
+      "wrong_to_customer": 0.005,
+      "wrong_to_customer_count": 3,
+      "held_back_rate": 0.5217,
+      "abstain_rate": 0.4333,
+      "review_rate": 0.0883,
+      "false_abstain_rate": 0.3357,
+      "correct_sent_rate": 0.4733,
+      "cost_multiplier": 0.567,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 185,
+          "review": 34,
+          "abstain": 60,
+          "sent_wrong": 1
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 99,
+          "review": 19,
+          "sent_wrong": 2
+        }
+      }
+    },
+    {
+      "config": "6 + self-consistency N=5 on every question",
+      "trials": 600,
+      "wrong_to_customer": 0.0,
+      "wrong_to_customer_count": 0,
+      "held_back_rate": 0.4933,
+      "abstain_rate": 0.435,
+      "review_rate": 0.0583,
+      "false_abstain_rate": 0.3071,
+      "correct_sent_rate": 0.5067,
+      "cost_multiplier": 2.833,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 194,
+          "abstain": 61,
+          "review": 25
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 110,
+          "review": 10
+        }
+      }
+    },
+    {
+      "config": "7 + self-consistency N=5 only in the log-prob grey band",
+      "trials": 600,
+      "wrong_to_customer": 0.0,
+      "wrong_to_customer_count": 0,
+      "held_back_rate": 0.5133,
+      "abstain_rate": 0.4333,
+      "review_rate": 0.08,
+      "false_abstain_rate": 0.3286,
+      "correct_sent_rate": 0.4867,
+      "cost_multiplier": 0.627,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 188,
+          "review": 32,
+          "abstain": 60
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 104,
+          "review": 16
+        }
+      }
+    }
+  ],
+  "min_score_sweep": [
+    {
+      "min_score": 0.0,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.3,
+      "wrong_to_customer": 0.0683,
+      "held_back_rate": 0.4033,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.4,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.5,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.6,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.7,
+      "wrong_to_customer": 0.035,
+      "held_back_rate": 0.5333,
+      "false_abstain_rate": 0.4286
+    },
+    {
+      "min_score": 0.8,
+      "wrong_to_customer": 0.0233,
+      "held_back_rate": 0.6333,
+      "false_abstain_rate": 0.5
+    },
+    {
+      "min_score": 0.9,
+      "wrong_to_customer": 0.0233,
+      "held_back_rate": 0.7,
+      "false_abstain_rate": 0.6429
+    }
+  ],
+  "logprob_sweep": [
+    {
+      "cutoff": null,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "cutoff": -0.1,
+      "wrong_to_customer": 0.0267,
+      "held_back_rate": 0.4833,
+      "false_abstain_rate": 0.3143
+    },
+    {
+      "cutoff": -0.25,
+      "wrong_to_customer": 0.03,
+      "held_back_rate": 0.4417,
+      "false_abstain_rate": 0.2571
+    },
+    {
+      "cutoff": -0.5,
+      "wrong_to_customer": 0.04,
+      "held_back_rate": 0.4317,
+      "false_abstain_rate": 0.2464
+    },
+    {
+      "cutoff": -1.0,
+      "wrong_to_customer": 0.045,
+      "held_back_rate": 0.4267,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -1.5,
+      "wrong_to_customer": 0.0467,
+      "held_back_rate": 0.425,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -2.0,
+      "wrong_to_customer": 0.0533,
+      "held_back_rate": 0.4183,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -3.0,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    }
+  ],
+  "self_consistency_sweep": [
+    {
+      "n": 1,
+      "min_agree": 1,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143,
+      "cost_multiplier": 1.0
+    },
+    {
+      "n": 3,
+      "min_agree": 2,
+      "wrong_to_customer": 0.0117,
+      "held_back_rate": 0.43,
+      "false_abstain_rate": 0.225,
+      "cost_multiplier": 3.0
+    },
+    {
+      "n": 5,
+      "min_agree": 3,
+      "wrong_to_customer": 0.0067,
+      "held_back_rate": 0.4283,
+      "false_abstain_rate": 0.2179,
+      "cost_multiplier": 5.0
+    },
+    {
+      "n": 5,
+      "min_agree": 4,
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.4617,
+      "false_abstain_rate": 0.2607,
+      "cost_multiplier": 5.0
+    },
+    {
+      "n": 7,
+      "min_agree": 4,
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.435,
+      "false_abstain_rate": 0.2179,
+      "cost_multiplier": 7.0
+    }
+  ],
+  "isolated_controls": {
+    "none": {
+      "config": "none",
+      "trials": 600,
+      "wrong_to_customer": 0.08,
+      "wrong_to_customer_count": 48,
+      "held_back_rate": 0.3917,
+      "abstain_rate": 0.3917,
+      "review_rate": 0.0,
+      "false_abstain_rate": 0.2143,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "sent_wrong": 12,
+          "abstain": 60
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 175,
+          "sent_wrong": 25
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "sent_wrong": 11
+        }
+      }
+    },
+    "min_score_0.5": {
+      "config": "min_score_0.5",
+      "trials": 600,
+      "wrong_to_customer": 0.0383,
+      "wrong_to_customer_count": 23,
+      "held_back_rate": 0.4333,
+      "abstain_rate": 0.4333,
+      "review_rate": 0.0,
+      "false_abstain_rate": 0.2143,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 0.567,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "sent_wrong": 12,
+          "abstain": 60
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 200
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "sent_wrong": 11
+        }
+      }
+    },
+    "citations": {
+      "config": "citations",
+      "trials": 600,
+      "wrong_to_customer": 0.045,
+      "wrong_to_customer_count": 27,
+      "held_back_rate": 0.4817,
+      "abstain_rate": 0.3917,
+      "review_rate": 0.09,
+      "false_abstain_rate": 0.325,
+      "correct_sent_rate": 0.4733,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 185,
+          "review": 31,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 175,
+          "sent_wrong": 19,
+          "review": 6
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 99,
+          "review": 17,
+          "sent_wrong": 4
+        }
+      }
+    },
+    "logprob_-1.0": {
+      "config": "logprob_-1.0",
+      "trials": 600,
+      "wrong_to_customer": 0.045,
+      "wrong_to_customer_count": 27,
+      "held_back_rate": 0.4267,
+      "abstain_rate": 0.3917,
+      "review_rate": 0.035,
+      "false_abstain_rate": 0.2429,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "review": 8,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 175,
+          "sent_wrong": 18,
+          "review": 7
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "review": 6,
+          "sent_wrong": 5
+        }
+      }
+    },
+    "self_consistency_5": {
+      "config": "self_consistency_5",
+      "trials": 600,
+      "wrong_to_customer": 0.0067,
+      "wrong_to_customer_count": 4,
+      "held_back_rate": 0.4283,
+      "abstain_rate": 0.4283,
+      "review_rate": 0.0,
+      "false_abstain_rate": 0.2179,
+      "correct_sent_rate": 0.565,
+      "cost_multiplier": 5.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 219,
+          "abstain": 61
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 196,
+          "sent_wrong": 4
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 120
+        }
+      }
+    },
+    "talk18_verifier": {
+      "config": "talk18_verifier",
+      "trials": 600,
+      "wrong_to_customer": 0.0483,
+      "wrong_to_customer_count": 29,
+      "held_back_rate": 0.4233,
+      "abstain_rate": 0.3917,
+      "review_rate": 0.0317,
+      "false_abstain_rate": 0.2429,
+      "correct_sent_rate": 0.5283,
+      "cost_multiplier": 1.0,
+      "by_kind": {
+        "answerable": {
+          "n": 280,
+          "sent_ok": 208,
+          "review": 8,
+          "abstain": 60,
+          "sent_wrong": 4
+        },
+        "unanswerable": {
+          "n": 200,
+          "abstain": 175,
+          "sent_wrong": 20,
+          "review": 5
+        },
+        "stale": {
+          "n": 120,
+          "sent_ok": 109,
+          "review": 6,
+          "sent_wrong": 5
+        }
+      }
+    }
+  }
+}

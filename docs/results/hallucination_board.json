@@ -1,0 +1,241 @@
+{
+  "note": "simulation: seeded fake model with invented failure rates, fictional store; every number is an exact count on the labelled set, not a production measurement",
+  "question_set": {
+    "answerable": 14,
+    "unanswerable": 10,
+    "stale": 6
+  },
+  "seeds": 20,
+  "ladder": [
+    {
+      "config": "0 incident: undated index, plain prompt, no checks",
+      "wrong_to_customer": 0.6133,
+      "held_back_rate": 0.2667,
+      "false_abstain_rate": 0.2143,
+      "cost_multiplier": 1.0
+    },
+    {
+      "config": "1 talk 18: dated retrieval + verifier + review queue",
+      "wrong_to_customer": 0.0933,
+      "held_back_rate": 0.375,
+      "false_abstain_rate": 0.2464,
+      "cost_multiplier": 1.0
+    },
+    {
+      "config": "2 + 'I don't know' few-shot prompt + JSON schema",
+      "wrong_to_customer": 0.0483,
+      "held_back_rate": 0.4233,
+      "false_abstain_rate": 0.2429,
+      "cost_multiplier": 1.0
+    },
+    {
+      "config": "3 + retrieval score >= 0.5, else abstain",
+      "wrong_to_customer": 0.015,
+      "held_back_rate": 0.4567,
+      "false_abstain_rate": 0.2429,
+      "cost_multiplier": 0.567
+    },
+    {
+      "config": "4 + citation enforcement",
+      "wrong_to_customer": 0.0133,
+      "held_back_rate": 0.5133,
+      "false_abstain_rate": 0.325,
+      "cost_multiplier": 0.567
+    },
+    {
+      "config": "5 + log-prob gate (min token >= -1.0)",
+      "wrong_to_customer": 0.005,
+      "held_back_rate": 0.5217,
+      "false_abstain_rate": 0.3357,
+      "cost_multiplier": 0.567
+    },
+    {
+      "config": "6 + self-consistency N=5 on every question",
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.4933,
+      "false_abstain_rate": 0.3071,
+      "cost_multiplier": 2.833
+    },
+    {
+      "config": "7 + self-consistency N=5 only in the log-prob grey band",
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.5133,
+      "false_abstain_rate": 0.3286,
+      "cost_multiplier": 0.627
+    }
+  ],
+  "min_score_sweep": [
+    {
+      "min_score": 0.0,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.3,
+      "wrong_to_customer": 0.0683,
+      "held_back_rate": 0.4033,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.4,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.5,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.6,
+      "wrong_to_customer": 0.0383,
+      "held_back_rate": 0.4333,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "min_score": 0.7,
+      "wrong_to_customer": 0.035,
+      "held_back_rate": 0.5333,
+      "false_abstain_rate": 0.4286
+    },
+    {
+      "min_score": 0.8,
+      "wrong_to_customer": 0.0233,
+      "held_back_rate": 0.6333,
+      "false_abstain_rate": 0.5
+    },
+    {
+      "min_score": 0.9,
+      "wrong_to_customer": 0.0233,
+      "held_back_rate": 0.7,
+      "false_abstain_rate": 0.6429
+    }
+  ],
+  "logprob_sweep": [
+    {
+      "cutoff": null,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    },
+    {
+      "cutoff": -0.1,
+      "wrong_to_customer": 0.0267,
+      "held_back_rate": 0.4833,
+      "false_abstain_rate": 0.3143
+    },
+    {
+      "cutoff": -0.25,
+      "wrong_to_customer": 0.03,
+      "held_back_rate": 0.4417,
+      "false_abstain_rate": 0.2571
+    },
+    {
+      "cutoff": -0.5,
+      "wrong_to_customer": 0.04,
+      "held_back_rate": 0.4317,
+      "false_abstain_rate": 0.2464
+    },
+    {
+      "cutoff": -1.0,
+      "wrong_to_customer": 0.045,
+      "held_back_rate": 0.4267,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -1.5,
+      "wrong_to_customer": 0.0467,
+      "held_back_rate": 0.425,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -2.0,
+      "wrong_to_customer": 0.0533,
+      "held_back_rate": 0.4183,
+      "false_abstain_rate": 0.2429
+    },
+    {
+      "cutoff": -3.0,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143
+    }
+  ],
+  "self_consistency_sweep": [
+    {
+      "n": 1,
+      "min_agree": 1,
+      "wrong_to_customer": 0.08,
+      "held_back_rate": 0.3917,
+      "false_abstain_rate": 0.2143,
+      "cost_multiplier": 1.0
+    },
+    {
+      "n": 3,
+      "min_agree": 2,
+      "wrong_to_customer": 0.0117,
+      "held_back_rate": 0.43,
+      "false_abstain_rate": 0.225,
+      "cost_multiplier": 3.0
+    },
+    {
+      "n": 5,
+      "min_agree": 3,
+      "wrong_to_customer": 0.0067,
+      "held_back_rate": 0.4283,
+      "false_abstain_rate": 0.2179,
+      "cost_multiplier": 5.0
+    },
+    {
+      "n": 5,
+      "min_agree": 4,
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.4617,
+      "false_abstain_rate": 0.2607,
+      "cost_multiplier": 5.0
+    },
+    {
+      "n": 7,
+      "min_agree": 4,
+      "wrong_to_customer": 0.0,
+      "held_back_rate": 0.435,
+      "false_abstain_rate": 0.2179,
+      "cost_multiplier": 7.0
+    }
+  ],
+  "isolated": {
+    "none": {
+      "wrong_to_customer": 0.08,
+      "false_abstain_rate": 0.2143,
+      "cost_multiplier": 1.0
+    },
+    "min_score_0.5": {
+      "wrong_to_customer": 0.0383,
+      "false_abstain_rate": 0.2143,
+      "cost_multiplier": 0.567
+    },
+    "citations": {
+      "wrong_to_customer": 0.045,
+      "false_abstain_rate": 0.325,
+      "cost_multiplier": 1.0
+    },
+    "logprob_-1.0": {
+      "wrong_to_customer": 0.045,
+      "false_abstain_rate": 0.2429,
+      "cost_multiplier": 1.0
+    },
+    "self_consistency_5": {
+      "wrong_to_customer": 0.0067,
+      "false_abstain_rate": 0.2179,
+      "cost_multiplier": 5.0
+    },
+    "talk18_verifier": {
+      "wrong_to_customer": 0.0483,
+      "false_abstain_rate": 0.2429,
+      "cost_multiplier": 1.0
+    }
+  }
+}
