@@ -21,7 +21,6 @@ class Probe:
         self.port = u.port or (443 if u.scheme == "https" else 80)
         self.path = (u.path or "/") + (f"?{u.query}" if u.query else "")
         self.ctx = ctx or ssl.create_default_context()
-        self.ctx.minimum_version = ssl.TLSVersion.TLSv1_2  # never offer TLS 1.0/1.1
         self.timeout = timeout
         self.sock = None
         self.addr = None
@@ -74,7 +73,9 @@ class Probe:
         tls, version = 0.0, None
         if self.scheme == "https":
             t2 = time.perf_counter()
-            raw = self.ctx.wrap_socket(raw, server_hostname=self.host)
+            tls_ctx = self.ctx
+            tls_ctx.minimum_version = ssl.TLSVersion.TLSv1_2  # never offer TLS 1.0/1.1
+            raw = tls_ctx.wrap_socket(raw, server_hostname=self.host)
             tls = time.perf_counter() - t2
             version = raw.version()
         self.sock = raw

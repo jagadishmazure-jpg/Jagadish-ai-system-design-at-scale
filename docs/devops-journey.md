@@ -32,7 +32,7 @@ Why bother? Picture a firm that deploys by hand to eight servers and misses one.
 ## 6. Kubernetes rolling update
 - **Problem:** a deploy that takes capacity away, or sends traffic to a pod that isn't ready.
 - **Here:** `k8s/deployment.yaml` uses 3 replicas with `RollingUpdate maxUnavailable: 0, maxSurge: 1`. The readiness probe hits `/readyz`, which returns 503 when config is broken. The liveness probe hits `/healthz`. A `preStop` sleep lets endpoints drain.
-- **Proof (real kind cluster in CI):** `scripts/kind_rollout.sh` starts an in-cluster load loop against the Service. It rolls v1 → v2 and asserts **zero failed requests**. It then rolls a broken v3 (`APP_BROKEN_CONFIG=1`). The rollout must halt, v3 must serve 0 requests, and v2 keeps serving with zero failures. The numbers are in `loadtest/results/k8s_rollout.json`, copied from the CI artifact.
+- **Proof (real kind cluster in CI):** `scripts/kind_rollout.sh` starts an in-cluster load loop against the Service. It rolls v1 → v2 and asserts **zero failed requests**. It then rolls a broken v3 (`APP_BROKEN_CONFIG=1`). The rollout must halt, v3 must serve 0 requests, and v2 keeps serving with zero failures. The numbers are in `loadtest/results/k8s_rollout.json`, copied from the CI artifact. Recorded run (image `3ad781097f0c`): v1 → v2 took 7.7 s, with 2,023 requests and 0 failed (465 v1, 1,558 v2). Broken v3: rollout halted, 3 v2 pods ready throughout, 1,801 requests, 0 failed, 0 served by v3.
 - **Alternatives:** blue/green, canary with Argo Rollouts or Flagger.
 
 ## 7. GitOps

@@ -281,6 +281,13 @@ one about a metric that counted canned answers as successes and one about a
 model-call cap with no per-user share, are written up in
 [`docs/pitfalls.md`](docs/pitfalls.md).
 
+Real run on a kind cluster in GitHub Actions (`loadtest/results/k8s_rollout.json`,
+image `3ad781097f0c`): the v1 to v2 rolling update took 7.7 s and served 2,023
+requests from an in-cluster load loop with 0 failures (465 answered by v1, 1,558
+by v2). A broken v3 whose readiness check fails was then rolled out. The rollout
+halted with all 3 v2 pods still ready, and 1,801 requests were served, 0 failed,
+0 by v3.
+
 Measured on one machine (`loadtest/results/talks_benchmarks.json`, simulated
 where a model is involved): batching 16 vs 1 raised throughput from 195 to 844
 rps; load-aware sticky routing raised prefix-cache hit rate from 0.388 to 0.80;
