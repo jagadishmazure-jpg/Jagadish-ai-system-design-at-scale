@@ -3,8 +3,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 TOKEN=$(python scripts/dev_token.py u-ava)
-docker compose up -d --build
-trap 'docker compose logs --no-color | tail -n 80; docker compose down -v' EXIT
+docker compose up -d --build --wait --wait-timeout 180 || true
+trap 'docker compose ps -a; for s in api1 worker-bulk autoscaler; do docker compose logs --no-color --tail 40 $s; done; docker compose down -v' EXIT
 for i in $(seq 1 60); do
   if curl -fsS http://localhost:8080/healthz >/dev/null 2>&1; then break; fi
   sleep 2
