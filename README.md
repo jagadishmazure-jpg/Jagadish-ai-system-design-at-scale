@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**587 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**602 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 **All dashboards and evidence boards, explained in one place: [docs/dashboards.md](docs/dashboards.md).**
@@ -269,6 +269,8 @@ without a cost estimate first.
 | `StreamLedger` wired into `/v1/chat/stream` with a real provider stream; retry budget in the live gateway | Planned |
 | Talk 18: dated policy retrieval, freshness check, answer verifier + review queue, ops vs quality dashboards; network waterfall + delay proxy; event-loop stall replay, process-pool fix, thread/async/process experiments | Built, tested (A, B simulated; C measured; see [silent-failures](docs/silent-failures.md), [network-waterfall](docs/network-waterfall.md), [concurrency](docs/concurrency.md)) |
 | Talk 18 checks wired into the live `/v1/chat` path | Planned |
+| Hallucination controls: log-prob gate, self-consistency (full and grey-band), retrieval score floor with abstain, citation enforcement, few-shot "I don't know" prompt + strict JSON output, threshold sweeps, evidence board | Built, tested (simulated, seeded fake model; [hallucination-controls](docs/hallucination-controls.md)) |
+| Hallucination controls wired into the live `/v1/chat` path; real-model log-prob calibration | Planned |
 | Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
 | Per-user share inside the model-call cap | Built, tested ([pitfalls](docs/pitfalls.md)) |
 | k8s manifests, zero-downtime rollout and broken-release halt on kind | Built; run for real in CI (`image-and-kind-rollout`) |
@@ -336,6 +338,16 @@ A fictional retail assistant showed a blank screen for 16 s and then the whole a
 
 ![Talk 18 evidence board](docs/img/talk18_evidence_board.png)
 
+## Hallucination controls: confident wrong answers
+
+Five controls on top of the talk 18 verifier and review queue, measured on a labelled set of answerable, unanswerable and stale questions. [`docs/hallucination-controls.md`](docs/hallucination-controls.md)
+
+<!-- BEGIN HALLU_README -->
+Simulated (seeded fake model with log-probs), exact counts over 600 trials (30 labelled questions x 20 seeds: 14 answerable, 10 unanswerable, 6 stale). Wrong answers reaching customers: 61.3% in the incident setup, 9.3% with the talk 18 fixes, 0.5% with all five new controls at one model call, 0.0% adding self-consistency only in the log-prob grey band (x0.627 calls per question vs x2.833 for N=5 on every question). The price: answerable questions held back rise from 24.6% to 32.9%.
+<!-- END HALLU_README -->
+
+![Hallucination controls evidence board](docs/img/hallucination_board.png)
+
 ## Related repos
 
 - [Jagadish-agent-reliability-lab](https://github.com/jagadishmazure-jpg/Jagadish-agent-reliability-lab): failure injection for agents. This repo covers the traffic side.
@@ -355,7 +367,7 @@ owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-587 tests collected
+602 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).
