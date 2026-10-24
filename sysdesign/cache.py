@@ -92,3 +92,59 @@ class SemanticCache:
 
     def size(self) -> int:
         return sum(self.r.hlen(ns) for ns in self.r.scan_iter(match=f"{self.p}:*"))
+
+
+# --------------------------------------------------------------------------
+# Talk 15 addition: exact-match response cache (cache-aside, 24h TTL).
+# Sits in front of SemanticCache: a cheap exact lookup first, the similarity
+# search only on a miss. Same intent and PII rules as SemanticCache.
+
+_EDGE_PUNCT = "?!.,;:\"'()[]{}"
+_SENTENCE_END = "?!.,;:"
+
+
+def normalize_prompt(text: str) -> str:
+    """Casefold, collapse whitespace and drop edge punctuation from plain words.
+
+    A token containing a digit (order numbers, SKUs, account ids) keeps its case
+    and inner punctuation; only a trailing sentence mark is removed, so
+    "#A-1042?" and "#A-1042" match but "#A-1042" and "#A-1043" never do.
+    """
+    out = []
+    for tok in text.split():
+        if any(ch.isdigit() for ch in tok):
+            tok = tok.rstrip(_SENTENCE_END)
+        else:
+            tok = tok.strip(_EDGE_PUNCT).casefold()
+        if tok:
+            out.append(tok)
+    return " ".join(out)
+
+
+class ResponseCache:
+    """Cache-aside: the reader checks the cache, computes on a miss, then writes."""
+
+    def __init__(self, redis, ttl_s: int = 24 * 3600, prefix: str = "rc") -> None:
+        if ttl_s <= 0:
+            raise ValueError("ttl_s must be > 0")
+        self.r, self.ttl_s, self.p = redis, ttl_s, prefix
+        self.stats = {"hits": 0, "misses": 0, "stores": 0, "refused": 0}
+
+    def key(self, tenant: str, prompt: str) -> str:
+        h = hashlib.sha256(normalize_prompt(prompt).encode()).hexdigest()[:24]
+        return f"{self.p}:{tenant}:{h}"
+
+    def get_or_compute(self, tenant: str, intent: str, prompt: str, compute) -> tuple[str, bool]:
+        if intent not in CACHEABLE_INTENTS or contains_pii(prompt):
+            self.stats["refused"] += 1
+            return compute(), False
+        k = self.key(tenant, prompt)
+        raw = self.r.get(k)
+        if raw is not None:
+            self.stats["hits"] += 1
+            return raw.decode() if isinstance(raw, bytes) else raw, True
+        self.stats["misses"] += 1
+        answer = compute()
+        self.r.set(k, redact(answer), ex=self.ttl_s)
+        self.stats["stores"] += 1
+        return answer, False

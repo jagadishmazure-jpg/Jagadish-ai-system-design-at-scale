@@ -1,0 +1,78 @@
+{
+  "note": "Simulated incident replay, illustrative prices. Timeline months other than June and August are story points, not measurements.",
+  "a_tokens_per_turn": {
+    "system_prompt": 4200,
+    "retrieved_docs": 1800,
+    "history": 565.2,
+    "user_message_and_format": 75
+  },
+  "b_cost_per_turn": {
+    "input_usd": 0.0166,
+    "output_usd": 0.0038,
+    "input_pct": 0.8137,
+    "input_usd_per_output_usd": 4.37
+  },
+  "c_timeline": [
+    [
+      "Jan",
+      1200,
+      ""
+    ],
+    [
+      "Feb",
+      1200,
+      ""
+    ],
+    [
+      "Mar",
+      1500,
+      "tool schemas"
+    ],
+    [
+      "Apr",
+      1500,
+      ""
+    ],
+    [
+      "May",
+      1500,
+      ""
+    ],
+    [
+      "Jun",
+      1730,
+      "policies"
+    ],
+    [
+      "Jul",
+      4800,
+      "bigger system prompt"
+    ],
+    [
+      "Aug",
+      6640,
+      "more retrieval"
+    ],
+    [
+      "Sep",
+      6640,
+      ""
+    ]
+  ],
+  "d_static": {
+    "static_tokens": 4200,
+    "turns_per_day": 200000,
+    "identical_tokens_per_day": 840000000,
+    "usd_per_day_resending": 2100.0,
+    "usd_per_day_if_cached": 210.0
+  },
+  "after": {
+    "cached_tokens_per_turn": 4517.3,
+    "uncached_tokens_per_turn": 2122.9,
+    "input_usd_per_turn": 0.00644,
+    "ttft_p50_before": 0.826,
+    "ttft_p50_after": 0.454,
+    "monthly_before": 118553.0,
+    "monthly_after": 63173.0
+  }
+}

@@ -29,6 +29,8 @@ jobs:
         run: python -m loadtest.harness --check
       - name: README and capacity numbers match the results and test count
         run: python scripts/render_docs.py --check
+      - name: Talk 15 caching results and evidence board match a fresh run
+        run: python scripts/caching_bench.py --check && python scripts/evidence_board.py --check
       - name: No real brand names in code or docs
         run: python scripts/check_brands.py
 
