@@ -34,3 +34,5 @@ below is generated from the defaults and checked in CI.
 
 Prices are illustrative per-million-token tiers (`sysdesign/providers.py`,
 as-of date in that file), not quotes from any vendor.
+
+For the 10M-user cost model (per-turn vs per-conversation budget, 10x scale) see [cost-model-10m.md](cost-model-10m.md).

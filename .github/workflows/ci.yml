@@ -95,11 +95,11 @@ jobs:
           echo "b89aada5a39d620da3fcd16435b7f28d858927dd53f92cbac77686b0588b600d  kind" | sha256sum -c
           chmod +x kind && sudo mv kind /usr/local/bin/ && kind create cluster --wait 120s
       - name: Image tagged with the git SHA; v1 -> v2 under load, broken v3 must halt
-        env: { OUT: results/k8s_rollout.json }
+        env: { OUT: loadtest/results/k8s_rollout.json }
         run: GIT_SHA=${GITHUB_SHA::12} bash scripts/kind_rollout.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
-        with: { name: k8s-rollout, path: results/k8s_rollout.json, if-no-files-found: warn }
+        with: { name: k8s-rollout, path: loadtest/results/k8s_rollout.json, if-no-files-found: warn }
 
   secrets:
     runs-on: ubuntu-latest

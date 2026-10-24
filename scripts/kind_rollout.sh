@@ -3,7 +3,7 @@
 set -euo pipefail
 SHA=${GIT_SHA:-$(git rev-parse --short HEAD)}
 IMG=kestrel-api:$SHA
-OUT=${OUT:-results/k8s_rollout.json}
+OUT=${OUT:-loadtest/results/k8s_rollout.json}
 docker build -q --build-arg GIT_SHA="$SHA" -t "$IMG" .
 kind load docker-image "$IMG"
 kubectl apply -f k8s/redis.yaml -f k8s/configmap.yaml -f k8s/service.yaml
@@ -38,7 +38,7 @@ R3=$(kubectl logs load-v3 | grep RESULT | sed 's/RESULT //')
 kubectl rollout undo deploy/kestrel-api
 kubectl rollout status deploy/kestrel-api --timeout=120s
 
-mkdir -p results
+mkdir -p "$(dirname "$OUT")"
 python3 - "$R2" "$R3" "$V3_HALTED" "$READY" "$T0" "$T1" "$SHA" > "$OUT" <<'PY'
 import json, sys
 r2, r3 = json.loads(sys.argv[1]), json.loads(sys.argv[2])
