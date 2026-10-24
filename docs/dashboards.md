@@ -13,7 +13,7 @@ Every evidence board in the portfolio, in one place. Each board is a single pict
 | [Talk 18 board](#4-talk-18-board) | this repo, `docs/img/talk18_evidence_board.png` | Merged (PR #15) | Silent wrong answers, page-load waterfall, event loop vs processes |
 | [Network waterfall (talk 18)](#5-network-waterfall-talk-18) | this repo, `docs/img/network_waterfall.png` | Merged (PR #15) | Where the time goes in one page load, per network path |
 | [Token accounting](#6-token-accounting-board) | [Jagadish-token-accounting](https://github.com/jagadishmazure-jpg/Jagadish-token-accounting/blob/main/docs/charts/evidence_board.png) | Merged | Real tokenizer counts, quick-rule error, where input tokens go |
-| [Capacity planning](#7-capacity-planning-board) | [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) | Open PR #8 in that repo | Same RPS, contract share vs bill, chat p99 and bill per scenario, the token exercise |
+| [Capacity planning](#7-capacity-planning-board) | [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) | Merged (PR #8 in that repo) | Same RPS, contract share vs bill, chat p99 and bill per scenario, the token exercise |
 
 Related charts that are single plots, not boards, are listed at the end.
 
@@ -161,7 +161,7 @@ Lives in another repo: [evidence_board.png](https://github.com/jagadishmazure-jp
 
 ## 7. Capacity planning board
 
-Lives in another repo: [evidence_board.png](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) ([evidence-board.md](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/evidence-board.md)). Added in [PR #8](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/pull/8) there; the links work once it is merged.
+Lives in another repo: [evidence_board.png](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/img/evidence_board.png) ([evidence-board.md](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning/blob/main/docs/evidence-board.md)).
 
 - **For:** the talk on planning LLM capacity in tokens, not requests. Fictional Brightdesk assistant (Kestrel Lane Software). Panels (a)-(c) **simulated** (seeded planner and fleet simulator, illustrative prices); panel (d) inputs **measured** with the offline token counter on synthetic texts, outputs sampled; the 80x line is **quoted** from the talk. Source: that repo's `results.json`, copied into `docs/evidence_board.json` and drift-checked in its CI.
 
