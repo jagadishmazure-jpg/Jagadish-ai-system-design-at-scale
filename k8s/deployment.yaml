@@ -18,7 +18,7 @@ spec:
     metadata:
       labels: {app: kestrel-api}
     spec:
-      securityContext: {runAsNonRoot: true}
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}  # numeric: the image USER is a name
       terminationGracePeriodSeconds: 20
       containers:
         - name: api

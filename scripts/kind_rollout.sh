@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Runs on a free kind cluster (CI). v1 -> v2 rolling update under load, then a broken v3 that must stall.
 set -euo pipefail
+diag() { kubectl get pods -o wide || true; kubectl describe pods -l app=kestrel-api | tail -40 || true
+         kubectl logs -l app=kestrel-api --tail=30 --all-containers || true; }
+trap 'diag' ERR
 SHA=${GIT_SHA:-$(git rev-parse --short HEAD)}
 IMG=kestrel-api:$SHA
 OUT=${OUT:-loadtest/results/k8s_rollout.json}
