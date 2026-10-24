@@ -3,6 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 TOKEN=$(python scripts/dev_token.py u-ava)
+IDEM=smoke-refund-0001  # not a secret: a request idempotency key
 docker compose up -d --build --wait --wait-timeout 180 || true
 trap 'docker compose ps -a; for s in api1 worker-bulk autoscaler; do docker compose logs --no-color --tail 40 $s; done; docker compose down -v' EXIT
 for i in $(seq 1 60); do
@@ -17,7 +18,7 @@ out=$(curl -fsS -X POST http://localhost:8080/v1/chat -H "authorization: Bearer 
 echo "$out"
 echo "$out" | grep -q 'KG-100001' || { echo "unexpected chat reply"; exit 1; }
 job=$(curl -fsS -X POST http://localhost:8080/v1/refunds -H "authorization: Bearer $TOKEN" \
-  -H 'content-type: application/json' -H 'idempotency-key: smoke-refund-0001' -d '{"order_id":"KG-100002","amount":5}')
+  -H 'content-type: application/json' -H "idempotency-key: $IDEM" -d '{"order_id":"KG-100002","amount":5}')
 echo "$job"
 echo "$job" | grep -q job_id || { echo "no job id"; exit 1; }
 echo "compose smoke passed"
