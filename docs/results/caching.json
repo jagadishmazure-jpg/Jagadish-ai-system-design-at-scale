@@ -1,0 +1,187 @@
+{
+  "note": "Simulated. Illustrative prices; simulated prefill model; one-hour window scaled to a day.",
+  "cost_curve": [
+    {
+      "hit_rate": 0.0,
+      "cost_usd": 0.02105
+    },
+    {
+      "hit_rate": 0.1,
+      "cost_usd": 0.020128
+    },
+    {
+      "hit_rate": 0.2,
+      "cost_usd": 0.019207
+    },
+    {
+      "hit_rate": 0.3,
+      "cost_usd": 0.018285
+    },
+    {
+      "hit_rate": 0.4,
+      "cost_usd": 0.017364
+    },
+    {
+      "hit_rate": 0.5,
+      "cost_usd": 0.016442
+    },
+    {
+      "hit_rate": 0.6,
+      "cost_usd": 0.01552
+    },
+    {
+      "hit_rate": 0.7,
+      "cost_usd": 0.014599
+    },
+    {
+      "hit_rate": 0.8,
+      "cost_usd": 0.013677
+    },
+    {
+      "hit_rate": 0.9,
+      "cost_usd": 0.012756
+    },
+    {
+      "hit_rate": 1.0,
+      "cost_usd": 0.011834
+    }
+  ],
+  "incident": {
+    "traffic_growth": 1.3,
+    "bill_growth": 3.11,
+    "prompt_growth": 3.84,
+    "hypotheses": {
+      "users_send_longer_messages": {
+        "june_avg_question_tokens": 50,
+        "august_avg_question_tokens": 50,
+        "ruled_out": true
+      },
+      "provider_raised_prices": {
+        "june_prices": [
+          2.5,
+          10.0
+        ],
+        "august_prices": [
+          2.5,
+          10.0
+        ],
+        "ruled_out": true
+      }
+    },
+    "june": {
+      "era": "june",
+      "layout": "timestamp_first",
+      "turns_simulated": 6410,
+      "calls": 6602,
+      "retries": 192,
+      "avg_input_tokens": 1729.6,
+      "avg_question_tokens": 50,
+      "request_hit_rate": 0.0306,
+      "token_hit_rate": 0.0294,
+      "hits_from_retries": 192,
+      "hits_from_same_second_same_merchant": 202,
+      "seconds_with_traffic": 2988,
+      "seconds_with_zero_hits": 2793,
+      "per_minute_hit_rate_mean": 0.0305,
+      "per_minute_hit_rate_max": 0.0762,
+      "per_minute_hit_rate_zero_minutes": 0,
+      "input_cost_per_day_usd": 666.96,
+      "cost_per_day_usd": 1269.07,
+      "monthly_bill_usd": 38072.0,
+      "ttft_p50_s": 0.4,
+      "ttft_p95_s": 0.432
+    },
+    "august_timestamp_first": {
+      "era": "august",
+      "layout": "timestamp_first",
+      "turns_simulated": 8333,
+      "calls": 8571,
+      "retries": 238,
+      "avg_input_tokens": 6640.2,
+      "avg_question_tokens": 50,
+      "request_hit_rate": 0.1093,
+      "token_hit_rate": 0.0796,
+      "hits_from_retries": 238,
+      "hits_from_same_second_same_merchant": 937,
+      "seconds_with_traffic": 3265,
+      "seconds_with_zero_hits": 2524,
+      "per_minute_hit_rate_mean": 0.1086,
+      "per_minute_hit_rate_max": 0.1769,
+      "per_minute_hit_rate_zero_minutes": 0,
+      "input_cost_per_day_usd": 3170.08,
+      "cost_per_day_usd": 3951.75,
+      "monthly_bill_usd": 118553.0,
+      "ttft_p50_s": 0.826,
+      "ttft_p95_s": 0.945
+    },
+    "august_stable_first": {
+      "era": "august",
+      "layout": "stable_first",
+      "turns_simulated": 8333,
+      "calls": 8571,
+      "retries": 238,
+      "avg_input_tokens": 6640.2,
+      "avg_question_tokens": 50,
+      "request_hit_rate": 0.9999,
+      "token_hit_rate": 0.6803,
+      "hits_from_retries": 238,
+      "hits_from_same_second_same_merchant": 937,
+      "seconds_with_traffic": 3265,
+      "seconds_with_zero_hits": 0,
+      "per_minute_hit_rate_mean": 0.9999,
+      "per_minute_hit_rate_max": 1.0,
+      "per_minute_hit_rate_zero_minutes": 0,
+      "input_cost_per_day_usd": 1324.09,
+      "cost_per_day_usd": 2105.77,
+      "monthly_bill_usd": 63173.0,
+      "ttft_p50_s": 0.454,
+      "ttft_p95_s": 0.567
+    },
+    "fix": {
+      "input_cost_reduction": 0.5823,
+      "monthly_bill_before": 118553.0,
+      "monthly_bill_after": 63173.0,
+      "ttft_p50_before": 0.826,
+      "ttft_p50_after": 0.454
+    }
+  },
+  "multi_turn": {
+    "append_only": {
+      "mode": "append_only",
+      "input_tokens": 77520,
+      "cached_tokens": 68224,
+      "cached_share": 0.8801,
+      "summaries": 0
+    },
+    "rewrite": {
+      "mode": "rewrite",
+      "input_tokens": 77520,
+      "cached_tokens": 45056,
+      "cached_share": 0.5812,
+      "summaries": 0
+    },
+    "summarise": {
+      "mode": "summarise",
+      "input_tokens": 70720,
+      "cached_tokens": 61056,
+      "cached_share": 0.8633,
+      "summaries": 1
+    }
+  },
+  "response_cache": {
+    "requests": 3000,
+    "policy_requests": 1371,
+    "exact_hit_rate": 0.441,
+    "exact_hit_rate_policy_only": 0.965,
+    "exact_plus_semantic_hit_rate": 0.441,
+    "semantic_extra_hits": 0,
+    "order_status_cached": 0
+  },
+  "embedding_reindex": {
+    "chunks": 1000,
+    "first_index_embed_calls": 1000,
+    "changed_docs": 20,
+    "reindex_embed_calls": 40,
+    "reindex_hit_rate": 0.96
+  }
+}
