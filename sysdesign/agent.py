@@ -146,7 +146,7 @@ class SupportAgent:
             self.metrics.rejections.labels(d.reason).inc()
             return Result(429, "You've reached your usage limit for now.", r.intent, r.rung,
                           reason=d.reason, retry_after_s=d.retry_after_s)
-        slot = self.admission.acquire_model_slot()
+        slot = self.admission.acquire_model_slot(ident.tenant, ident.user_id)
         if slot is None:
             self.admission.settle_tokens(ident.tenant, ident.user_id, estimate, 0)
             self.metrics.rejections.labels("model_concurrency").inc()

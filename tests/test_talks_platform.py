@@ -122,3 +122,16 @@ def test_live_order_push_over_sse(issuer):
         server.should_exit = True
         th.join(5)
     assert [e["status"] for e in events] == ["shipped", "delivered"]
+
+
+def test_one_user_cannot_take_every_model_slot(r, clock):
+    """Finding from the branch build: a tenant-wide cap alone let parallel calls crowd out other users."""
+    from sysdesign.admission import Admission, Limits
+    a = Admission(r, clock=clock, limits={"standard": Limits(max_concurrent_model_calls=6, max_user_model_calls=2)})
+    held = [a.acquire_model_slot("retail", "flooder") for _ in range(5)]
+    assert sum(h is not None for h in held) == 2  # capped at its share, not all 6
+    others = [a.acquire_model_slot("retail", f"u{i}") for i in range(4)]
+    assert all(others)  # the remaining 4 slots are still there for everyone else
+    assert a.acquire_model_slot("retail", "u9") is None  # cluster cap still holds
+    a.release_model_slot(held[0])
+    assert a.acquire_model_slot("retail", "flooder") is not None  # release frees the user's share too
