@@ -150,3 +150,51 @@ class ModelGateway:
         self.stats["unavailable"] += 1
         self.elapsed_s = self.clock.now() - start
         raise Unavailable("no model provider available")
+
+
+@dataclass
+class SlowCallBreaker(CircuitBreaker):
+    """Talk 16: a breaker that also opens when calls are *slow*, not only when they fail.
+
+    Keeps the parent's failure-count trip and half-open probes. In addition it keeps the
+    last `slow_window` call latencies; once the window is full and more than
+    `slow_rate_threshold` of them took longer than `slow_call_s`, it opens. A slow probe
+    in half-open counts as a failure and re-opens the breaker.
+    """
+
+    slow_call_s: float = 1.0
+    slow_rate_threshold: float = 0.5
+    slow_window: int = 20
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        self._recent: list[bool] = []
+        self.slow_trips = 0
+        self.failure_trips = 0
+
+    def slow_rate(self) -> float:
+        return sum(self._recent) / len(self._recent) if self._recent else 0.0
+
+    def record_call(self, latency_s: float, ok: bool) -> None:
+        slow = latency_s > self.slow_call_s
+        if self.state == HALF_OPEN:
+            if ok and not slow:
+                self.record_success()
+                self._recent.clear()
+            else:
+                self._open(self.clock.now())
+            return
+        self._recent = (self._recent + [slow])[-self.slow_window:]
+        if not ok:
+            before = self.state
+            self.record_failure()
+            if before != OPEN and self.state == OPEN:
+                self.failure_trips += 1
+                self._recent.clear()
+                return
+        else:
+            self._failures.clear()
+        if len(self._recent) >= self.slow_window and self.slow_rate() > self.slow_rate_threshold:
+            self.slow_trips += 1
+            self._open(self.clock.now())
+            self._recent.clear()

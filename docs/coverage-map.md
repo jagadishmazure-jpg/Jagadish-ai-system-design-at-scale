@@ -1,6 +1,6 @@
-# Coverage map: 15 talks → code → proof
+# Coverage map: 16 talks → code → proof
 
-The sources are 15 public talks on system design. They are credited by topic only and paraphrased in my own words; nothing is quoted. Talks 1 and 2 shaped main's base build. Talks 3 to 14 were added later from the `grokbot/full-build` branch and live mostly in `sysdesign/ext/` so they reuse main's gateway, auth, PII, guardrails and admission instead of duplicating them.
+The sources are 16 public talks on system design. They are credited by topic only and paraphrased in my own words; nothing is quoted. Talks 1 and 2 shaped main's base build. Talks 3 to 14 were added later from the `grokbot/full-build` branch and live mostly in `sysdesign/ext/` so they reuse main's gateway, auth, PII, guardrails and admission instead of duplicating them.
 
 Status key: **Built** = code plus tests in CI. **Built, real infra** = also exercised on real infrastructure in CI. **Written, not run** = config exists but nobody has run it. **Planned** = not built.
 
@@ -21,6 +21,7 @@ Status key: **Built** = code plus tests in CI. **Built, real infra** = also exer
 | 13 | DevOps journey | [devops-journey.md](devops-journey.md), `k8s/`, `terraform/`, `infra/`, `deploy/` | kind rollout job, `test_talks_deploy.py`, `iac-validate` job | Built, real infra (kind). Terraform/Bicep validated only, never applied. Argo CD Planned |
 | 14 | Authentication by caller type | [authentication.md](authentication.md), `ext/authn.py`, gateway API-key path | `test_talks_auth.py`, `test_talks_real_redis.py` (real Redis in CI) | Built |
 | 15 | Caching for LLM apps, part 1: prompt order, prefix cache, response and embedding caches | [caching.md](caching.md), `ext/llm_cache.py`, `ResponseCache` in `cache.py`, `scripts/caching_bench.py`, `scripts/evidence_board.py` | `test_talk15_caching.py`, `docs/results/caching.json` | Built (simulated provider, illustrative prices) |
+| 16 | Tail latency and resilience: fan-out, Little's law, slow-call breaker, bulkheads, hedging, fallback ladder, deadline budget | [tail-latency.md](tail-latency.md), `ext/tail_latency.py`, `SlowCallBreaker` in `resilience.py`, `scripts/tail_latency_bench.py`, `scripts/tail_evidence_board.py` | `test_talk16_tail_latency.py`, `docs/results/tail_latency.json` | Built (simulated). Live gateway wiring Planned |
 | — | Capacity planning from tokens, not requests | Separate repo: [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning) | see that repo | Pointer only |
 
 Not ported on purpose: the branch's own agent, cache, router, admission, resilience, queue, autoscaler and workflow modules (main already has them), and the branch's digest-bound approval flow (main uses a human handoff instead).
