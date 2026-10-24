@@ -1,0 +1,164 @@
+{
+  "note": "measured on this machine; real sockets, real processes",
+  "machine": {
+    "cpu_count": 8,
+    "python": "3.13.5",
+    "gil_enabled": true,
+    "free_threaded_build": false
+  },
+  "replay_inline": {
+    "mode": "inline",
+    "idle_connections": 2000,
+    "jobs": 100,
+    "idle_loop": {
+      "max_stall_ms": 0.3,
+      "p99_lag_ms": 0.3,
+      "beats": 58
+    },
+    "during_uploads": {
+      "max_stall_ms": 2960.4,
+      "p99_lag_ms": 0.8,
+      "beats": 3
+    },
+    "chat_ping_ms": {
+      "p50": 2965.8,
+      "max": 2965.8,
+      "count": 1
+    },
+    "upload_wall_s": 2.966,
+    "throughput_jobs_per_s": 33.7
+  },
+  "replay_process_pool": {
+    "mode": "process",
+    "idle_connections": 2000,
+    "jobs": 100,
+    "idle_loop": {
+      "max_stall_ms": 0.4,
+      "p99_lag_ms": 0.4,
+      "beats": 57
+    },
+    "during_uploads": {
+      "max_stall_ms": 5.8,
+      "p99_lag_ms": 3.7,
+      "beats": 86
+    },
+    "chat_ping_ms": {
+      "p50": 0.1,
+      "max": 5.7,
+      "count": 44
+    },
+    "upload_wall_s": 0.469,
+    "throughput_jobs_per_s": 213.1
+  },
+  "io_experiment": {
+    "tasks": 5000,
+    "sleep_s": 0.05,
+    "threads": 256,
+    "thread_pool_s": 1.037,
+    "asyncio_s": 0.073,
+    "ideal_thread_s": 1.0
+  },
+  "cpu_experiment": {
+    "tasks": 150,
+    "prime_limit": 20000,
+    "threads": 24,
+    "processes": 8,
+    "serial_s": 1.496,
+    "threads_s": 1.542,
+    "asyncio_s": 1.53,
+    "process_pool_s": 0.24,
+    "process_speedup": 6.24,
+    "thread_speedup": 0.97
+  },
+  "to_thread_check": {
+    "agent_turn_ms": 11.29,
+    "image_job_ms": 31.03,
+    "switch_interval_ms": 5.0,
+    "loop_while_agent_turns_in_threads": {
+      "max_stall_ms": 18.0,
+      "p99_lag_ms": 1.6,
+      "beats": 23,
+      "wall_s": 0.096
+    },
+    "loop_while_cpu_jobs_in_threads": {
+      "max_stall_ms": 323.1,
+      "p99_lag_ms": 114.2,
+      "beats": 27,
+      "wall_s": 1.314
+    }
+  },
+  "delay_proxy_rtt_100ms": {
+    "1.2": [
+      {
+        "phase": "cold",
+        "dns_ms": 0.1,
+        "tcp_ms": 0.2,
+        "tls_ms": 204.4,
+        "tls_version": "TLSv1.2",
+        "ttfb_ms": 101.8,
+        "transfer_ms": 0.1,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 306.5
+      },
+      {
+        "phase": "warm",
+        "dns_ms": 0.0,
+        "tcp_ms": 0.0,
+        "tls_ms": 0.0,
+        "ttfb_ms": 101.5,
+        "transfer_ms": 0.0,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 101.6
+      },
+      {
+        "phase": "warm",
+        "dns_ms": 0.0,
+        "tcp_ms": 0.0,
+        "tls_ms": 0.0,
+        "ttfb_ms": 101.4,
+        "transfer_ms": 0.0,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 101.4
+      }
+    ],
+    "1.3": [
+      {
+        "phase": "cold",
+        "dns_ms": 0.1,
+        "tcp_ms": 0.1,
+        "tls_ms": 102.6,
+        "tls_version": "TLSv1.3",
+        "ttfb_ms": 101.6,
+        "transfer_ms": 0.0,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 204.6
+      },
+      {
+        "phase": "warm",
+        "dns_ms": 0.0,
+        "tcp_ms": 0.0,
+        "tls_ms": 0.0,
+        "ttfb_ms": 101.3,
+        "transfer_ms": 0.0,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 101.3
+      },
+      {
+        "phase": "warm",
+        "dns_ms": 0.0,
+        "tcp_ms": 0.0,
+        "tls_ms": 0.0,
+        "ttfb_ms": 117.8,
+        "transfer_ms": 0.0,
+        "bytes": 2000,
+        "content_encoding": "identity",
+        "total_ms": 117.8
+      }
+    ]
+  }
+}

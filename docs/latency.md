@@ -23,4 +23,11 @@ flowchart TD
   RR -->|no| DROP[drop reranker - see rag-pipeline.md]
   Q1 -->|network| NC[keep-alive, TCP_NODELAY, region pinning - networking-journey.md]
   Q1 -->|queue wait| AS[autoscale on queue age, not CPU]
+  NC --> N2{Far from the user? count round trips}
+  N2 -->|handshakes| T13[TLS 1.3, keep-alive, DNS cache]
+  N2 -->|slow start on big pages| IW[smaller page, bigger initial window]
+  N2 -->|RTT itself| EDGE[edge server + warm origin link - network-waterfall.md]
+  Q1 -->|event loop stalls| CB{CPU-bound step on the loop?}
+  CB -->|yes| PP[process pool, not threads - concurrency.md]
+  CB -->|no, waiting| AW[async or threads are fine]
 ```

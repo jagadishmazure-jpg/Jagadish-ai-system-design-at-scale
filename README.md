@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**360 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**435 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 ## Who it is for
@@ -259,6 +259,8 @@ without a cost estimate first.
 | Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
 | Talk 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
 | Talk 16: tail latency (fan-out math, slow-call breaker, per-dependency bulkheads, hedging, fallback ladder, deadline budget, evidence board) | Built, tested (simulated; [tail-latency.md](docs/tail-latency.md)) |
+| Talk 18: dated policy retrieval, freshness check, answer verifier + review queue, ops vs quality dashboards; network waterfall + delay proxy; event-loop stall replay, process-pool fix, thread/async/process experiments | Built, tested (A, B simulated; C measured; see [silent-failures](docs/silent-failures.md), [network-waterfall](docs/network-waterfall.md), [concurrency](docs/concurrency.md)) |
+| Talk 18 checks wired into the live `/v1/chat` path | Planned |
 | Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
 | Per-user share inside the model-call cap | Built, tested ([pitfalls](docs/pitfalls.md)) |
 | k8s manifests, zero-downtime rollout and broken-release halt on kind | Built; run for real in CI (`image-and-kind-rollout`) |
@@ -304,6 +306,14 @@ A simulated replay of a fictional support assistant whose bill grew 3.11x while 
 
 A simulated replay of a moderation service that turned slow on 1% of calls: turn p99 went from 4.7s to 10.2s with no deploy and no traffic change. Calls in parallel cut the median but left p99 at 9.8s; adding a replica only delayed worker saturation by about 15s in a brownout. Hedging reads at p95 (4.2% extra calls) plus deadline-budget timeouts brought p99 to 4.3s, and a slow-call breaker plus a 12-slot moderation bulkhead kept the brownout from filling the workers. Details, evidence board and limits: [`docs/tail-latency.md`](docs/tail-latency.md).
 
+## Talk 18: silent failures, network waterfall, concurrency
+
+- **Stale answers on green dashboards (simulated, 400 answers).** The ops view showed 0 errors, p95 1.066s and 100% uptime both before and after the fix. Before, 304 answers quoted a superseded 60-day refund rule. Dated retrieval plus a verifier sent 0 stale, invented or PII answers, and routed 42 to human review (a verifier alone needed 313). [`docs/silent-failures.md`](docs/silent-failures.md)
+- **Where the seconds go (simulated model, TLS checked for real).** Office 108 ms, hotel 1,400 to 2,400 ms, hotel via an edge server 500 ms. The 40 ms server is 1.7% to 4% of a hotel load. Through a 100 ms delay proxy, the TLS 1.2 handshake took 204 ms and TLS 1.3 took 103 ms. [`docs/network-waterfall.md`](docs/network-waterfall.md)
+- **Concurrency vs parallelism (measured, 8 CPUs, Python 3.13.5).** 100 image jobs on the event loop stalled 2,000 chats for 2,960 ms. A process pool cut the stall to 5.8 ms. For 150 CPU tasks: serial 1.50s, threads 1.54s, asyncio 1.53s, 8 processes 0.24s. [`docs/concurrency.md`](docs/concurrency.md)
+
+![Talk 18 evidence board](docs/img/talk18_evidence_board.png)
+
 ## Related repos
 
 - [Jagadish-agent-reliability-lab](https://github.com/jagadishmazure-jpg/Jagadish-agent-reliability-lab): failure injection for agents. This repo covers the traffic side.
@@ -322,7 +332,7 @@ owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-360 tests collected
+435 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).
