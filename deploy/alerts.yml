@@ -11,3 +11,7 @@ groups:
       - alert: AdmissionRejectionsSpike
         expr: sum(rate(sd_admission_rejections_total[5m])) / sum(rate(sd_requests_total[5m])) > 0.2
         for: 10m
+      - alert: HighErrorRate
+        # >1% of responses are 5xx for 5 minutes; same 1% threshold as sysdesign/ext/release.error_rate_alert
+        expr: sum(rate(sd_http_requests_total{status=~"5.."}[5m])) / sum(rate(sd_http_requests_total[5m])) > 0.01
+        for: 5m

@@ -1,5 +1,5 @@
 # Offline CI: lint, tests, load-model + docs drift checks, brand check, real-backend integration,
-# docker compose smoke, secret scan. No cloud resources, no provider keys.
+# docker compose smoke, secret scan, IaC validate (no apply), kind rollout. No cloud resources, no provider keys.
 name: ci
 on:
   push: { branches: [main] }
@@ -55,7 +55,7 @@ jobs:
       - name: Install
         run: pip install -r requirements-dev.txt "psycopg[binary]==3.2.9"
       - name: Lua scripts and checkpoints against real Redis and Postgres
-        run: python -m pytest -q -rs tests/test_integration_real_backends.py
+        run: python -m pytest -q -rs tests/test_integration_real_backends.py tests/test_talks_real_redis.py
 
   compose-smoke:
     runs-on: ubuntu-latest
@@ -68,6 +68,38 @@ jobs:
         run: pip install -r requirements.txt
       - name: docker compose up, requests through nginx, down
         run: bash scripts/compose_smoke.sh
+
+  iac-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install terraform (checksum-pinned; no credentials, no apply)
+        run: |
+          curl -fsSLo tf.zip https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
+          echo "186e0145f5e5f2eb97cbd785bc78f21bae4ef15119349f6ad4fa535b83b10df8  tf.zip" | sha256sum -c
+          unzip -q tf.zip && sudo mv terraform /usr/local/bin/
+      - run: terraform -chdir=terraform fmt -check -recursive
+      - run: terraform -chdir=terraform init -backend=false -input=false && terraform -chdir=terraform validate
+      - name: Bicep build (parity check, no deploy)
+        run: az bicep install && az bicep build --file infra/main.bicep --stdout > /dev/null
+
+  image-and-kind-rollout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Create kind cluster (checksum-pinned binary)
+        run: |
+          curl -fsSLo kind https://github.com/kubernetes-sigs/kind/releases/download/v0.24.0/kind-linux-amd64
+          echo "b89aada5a39d620da3fcd16435b7f28d858927dd53f92cbac77686b0588b600d  kind" | sha256sum -c
+          chmod +x kind && sudo mv kind /usr/local/bin/ && kind create cluster --wait 120s
+      - name: Image tagged with the git SHA; v1 -> v2 under load, broken v3 must halt
+        env: { OUT: results/k8s_rollout.json }
+        run: GIT_SHA=${GITHUB_SHA::12} bash scripts/kind_rollout.sh
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with: { name: k8s-rollout, path: results/k8s_rollout.json, if-no-files-found: warn }
 
   secrets:
     runs-on: ubuntu-latest

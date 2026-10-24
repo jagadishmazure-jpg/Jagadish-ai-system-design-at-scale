@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kestrel-api
+spec:
+  selector: {app: kestrel-api}
+  ports: [{port: 80, targetPort: http, name: http}]
