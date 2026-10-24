@@ -3,6 +3,6 @@ httpx==0.28.1
 uvicorn==0.34.2
 redis==6.1.0
 fakeredis[lua]==2.29.0
-pyjwt[crypto]==2.10.1
+pyjwt[crypto]==2.15.0
 prometheus-client==0.21.1
 opentelemetry-sdk==1.33.1
