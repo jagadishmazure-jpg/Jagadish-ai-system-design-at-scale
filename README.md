@@ -14,6 +14,8 @@ traffic with each pattern off and on so the effect is a number, not a claim.
 **587 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
+**All dashboards and evidence boards, explained in one place: [docs/dashboards.md](docs/dashboards.md).**
+
 ## Who it is for
 
 - **Interviewers and reviewers:** a system-design answer you can run, with
