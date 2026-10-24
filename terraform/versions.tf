@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.110"
+      version = "~> 5.10"
     }
   }
   # No backend on purpose: this layout is validated in CI, never applied.
