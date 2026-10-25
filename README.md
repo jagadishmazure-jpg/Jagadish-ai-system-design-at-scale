@@ -11,7 +11,7 @@ agent (policy RAG, order tracking, refunds, human escalation) in twelve
 production patterns implemented as tested code, then replays the same seeded
 traffic with each pattern off and on so the effect is a number, not a claim.
 <!-- BEGIN SUMMARY -->
-**607 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
+**680 tests.** In the load model (virtual time, fake providers): rate limiting kept normal users' p95 at 1.271s versus 9.988s and errors at 0.0% versus 79.4% while one user flooded; the intent ladder cut model spend 15.3x; breaker + fallback took outage-window errors from 100.0% to 0.0%; the semantic cache served 98.6% of policy questions with 0 wrong-source hits.
 <!-- END SUMMARY -->
 
 **All dashboards and evidence boards, explained in one place: [docs/dashboards.md](docs/dashboards.md).**
@@ -348,6 +348,16 @@ Simulated (seeded fake model with log-probs), exact counts over 600 trials (30 l
 
 ![Hallucination controls evidence board](docs/img/hallucination_board.png)
 
+## Replication: primary, replicas, failover, two regions, CDC
+
+One primary with replicas and three commit modes. Also read-your-writes for just-saved turns, a fenced failover drill, snapshot bootstrap, leaderless quorums, two-region edits to agent memory with clock skew, and an outbox that keeps the vector index fresh. [`docs/replication.md`](docs/replication.md)
+
+<!-- BEGIN REPL_README -->
+Simulated (fixed seeds), exact counts. Async commits in 0.4 ms but lost 1099 acknowledged writes over 200 crashes; semi-sync (2.372 ms p50) and sync (4.152 ms) lost 0. A write-position token cut stale read-backs from 58.4% to 0.0%. Snapshot + log tail built a replica x6.98 faster than a full copy. With the west clock 2000 ms behind, last-writer-wins dropped 1035 of 6000 memory and preference edits (684 only because of the clock); a hybrid logical clock removed the clock-caused drops and the custom merge dropped 0. Local-sync + remote-async: 1.42 ms p50 vs 68.3 ms all-sync, at 34.5 writes at risk per region loss. Outbox CDC kept the vector index within 192.7 ms (p95) with 0 mismatches.
+<!-- END REPL_README -->
+
+![Replication evidence board](docs/img/replication_board.png)
+
 ## Related repos
 
 - [Jagadish-agent-reliability-lab](https://github.com/jagadishmazure-jpg/Jagadish-agent-reliability-lab): failure injection for agents. This repo covers the traffic side.
@@ -367,7 +377,7 @@ owner shared, which are credited here by topic only. All text and code are
 original, and no talk content is quoted.
 
 <!-- BEGIN TESTCOUNT -->
-607 tests collected
+680 tests collected
 <!-- END TESTCOUNT -->
 
 MIT licensed. See [SECURITY.md](SECURITY.md).
