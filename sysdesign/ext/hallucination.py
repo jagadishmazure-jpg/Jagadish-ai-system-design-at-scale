@@ -1,6 +1,6 @@
-"""Hallucination controls on top of the talk 18 stack.
+"""Hallucination controls on top of the module 18 stack.
 
-Talk 18 already has dated retrieval, a grounding + freshness + PII verifier and a review queue
+Module 18 already has dated retrieval, a grounding + freshness + PII verifier and a review queue
 (`ext/freshness.py`). This module adds the five controls that were missing:
 
 1. ``logprob_gate``      - hold an answer back when the model was unsure of the tokens it chose.
@@ -12,7 +12,7 @@ Talk 18 already has dated retrieval, a grounding + freshness + PII verifier and 
 
 The model is a seeded fake (``FakeLM``) that exposes per-token log-probs. Its failure rates are invented,
 so every number produced here is from a simulation, measured exactly on a labelled question set. The store
-and its policies are the fictional ones from talk 18.
+and its policies are the fictional ones from module 18.
 """
 from __future__ import annotations
 
@@ -92,7 +92,7 @@ def chunk_id(v) -> str:
 def retrieve(question: str, store: PolicyStore, on: date, dated: bool = True, k: int = 2,
              min_score: float = 0.0) -> list[dict]:
     """Score = share of the question's content words found in the chunk (0..1). ``dated`` keeps only
-    versions in force on ``on`` (the talk 18 fix); ``min_score`` is control 3."""
+    versions in force on ``on`` (the module 18 fix); ``min_score`` is control 3."""
     q = words(question)
     pool = [v for v in store.versions if v.in_force(on)] if dated else list(store.versions)
     scored = []
@@ -145,7 +145,7 @@ class Generation:
 
 
 INVENTED = [14, 21, 45, 90]
-# made-up extra claims with no number in them: the talk 18 verifier (numbers only) cannot see these
+# made-up extra claims with no number in them: the module 18 verifier (numbers only) cannot see these
 INVENTED_CLAIMS = ["Assembly is included free.", "We also collect the old item at no charge.",
                    "Exchanges never need a receipt."]
 
@@ -273,8 +273,8 @@ def enforce_citations(out: dict, chunks: list[dict], store: PolicyStore, on: dat
 @dataclass
 class Config:
     name: str
-    dated: bool = False           # talk 18: retrieve only versions in force
-    verifier: bool = False        # talk 18: grounding + freshness + PII verifier -> review queue
+    dated: bool = False           # module 18: retrieve only versions in force
+    verifier: bool = False        # module 18: grounding + freshness + PII verifier -> review queue
     idk_schema: bool = False      # control 5
     min_score: float = 0.0        # control 3 (0 = off)
     citations: bool = False       # control 4
@@ -392,7 +392,7 @@ def evaluate(cfg: Config, seeds: int = 20, store: PolicyStore | None = None) -> 
 BASE = dict(dated=True, verifier=True)
 LADDER = [
     Config("0 incident: undated index, plain prompt, no checks"),
-    Config("1 talk 18: dated retrieval + verifier + review queue", **BASE),
+    Config("1 module 18: dated retrieval + verifier + review queue", **BASE),
     Config("2 + 'I don't know' few-shot prompt + JSON schema", **BASE, idk_schema=True),
     Config("3 + retrieval score >= 0.5, else abstain", **BASE, idk_schema=True, min_score=0.5),
     Config("4 + citation enforcement", **BASE, idk_schema=True, min_score=0.5, citations=True),
@@ -432,7 +432,7 @@ def results(seeds: int = 20) -> dict:
             "isolated_controls": {k: evaluate(Config(k, **iso, **kw), seeds) for k, kw in (
                 ("none", {}), ("min_score_0.5", {"min_score": 0.5}), ("citations", {"citations": True}),
                 ("logprob_-1.0", {"logprob_cutoff": -1.0}), ("self_consistency_5", {"sc_n": 5}),
-                ("talk18_verifier", {"verifier": True}))}}
+                ("module18_verifier", {"verifier": True}))}}
 
 
 def safe_log_line(question: str, o: Outcome) -> str:

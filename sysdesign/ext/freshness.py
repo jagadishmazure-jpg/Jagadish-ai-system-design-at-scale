@@ -1,4 +1,4 @@
-"""Talk 18 (A): silent wrong answers. Versioned policies, freshness check, answer verifier, review queue,
+"""Module 18 (A): silent wrong answers. Versioned policies, freshness check, answer verifier, review queue,
 and two dashboards (ops vs quality) for a simulated replay.
 
 Story (fictional): the support bot for the made-up Larkspur Home store told a customer on day 45 that the
@@ -132,7 +132,7 @@ class Verdict:
 
 
 def verify(answer: str, evidence: list[str], store: PolicyStore, on: date, threshold: float = 0.8) -> Verdict:
-    g = grounded(answer, evidence)  # reuse the talk 3 grounding check (numbers must come from evidence)
+    g = grounded(answer, evidence)  # reuse the module 3 grounding check (numbers must come from evidence)
     nums = set(re.findall(r"(?<![\w.-])\d+(?:\.\d+)?(?![\w-])", answer))
     grounded_share = 1.0 if not nums else 1 - len(g["ungrounded"]) / max(len(nums), len(g["ungrounded"]))
     f = freshness_check(answer, store, on)

@@ -1,4 +1,4 @@
-"""Talk 17 add-on to backend-evolution step 4: where session state lives. Seeded replay."""
+"""Module 17 add-on to backend-evolution step 4: where session state lives. Seeded replay."""
 import fakeredis
 import pytest
 

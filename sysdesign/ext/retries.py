@@ -1,4 +1,4 @@
-"""Talk 17 add-on: retries that cannot pile up.
+"""Module 17 add-on: retries that cannot pile up.
 
 - RetryBudget: retries may use at most `ratio` of recent request volume (10% by default, so 40 a
   minute at 400 requests a minute). When the budget is empty a failing call fails fast with 503
@@ -19,7 +19,7 @@ from collections import deque
 from ..clock import RealClock
 from ..resilience import RetryPolicy
 
-QUOTED_AMPLIFICATION_WITH_BUDGET = {"value": 1.1, "source": "quoted from the talk; not measured here"}
+QUOTED_AMPLIFICATION_WITH_BUDGET = {"value": 1.1, "source": "reference figure; not measured here"}
 
 
 class RetryBudget:

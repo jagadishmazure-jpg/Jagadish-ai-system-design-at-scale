@@ -1,4 +1,4 @@
-"""Talk 15: caching for LLM apps (part 1).
+"""Module 15: caching for LLM apps (part 1).
 
 Story (fictional): Kestrel is a support assistant for merchants on the made-up
 Tidewell storefront platform. Its model bill grew much faster than its traffic.

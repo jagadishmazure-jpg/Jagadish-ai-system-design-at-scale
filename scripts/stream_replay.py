@@ -1,4 +1,4 @@
-"""Talk 17 replay: buffered vs streamed time to first token through real local sockets.
+"""Module 17 replay: buffered vs streamed time to first token through real local sockets.
 
 Writes docs/results/stream_replay.json. Times are wall-clock measurements on this machine; the model
 is a fake that emits tokens at a set rate (ttft 0.88 s, 25 tok/s, 380 tokens at --scale 1), so
@@ -6,7 +6,7 @@ label them "measured transport, simulated model". If an nginx binary is on PATH,
 also measured behind real nginx with buffering on, off, gzip on the stream, and this repo's fixed
 gzip rule. No network beyond 127.0.0.1, no keys.
 
-  python scripts/stream_replay.py            # full talk speed, about 3 minutes
+  python scripts/stream_replay.py            # full module speed, about 3 minutes
   python scripts/stream_replay.py --scale 20 # 20x faster, for a quick look
 """
 from __future__ import annotations
@@ -90,7 +90,7 @@ async def one(server_kw: dict, proxy: str | None, scale: float, nginx_body: str 
             port = px.port
         else:
             port = srv.port
-        r = await st.sse_get(port, "talk17-sample-0001")
+        r = await st.sse_get(port, "module17-sample-0001")
         return {"first_token_s": r.first_token_s, "first_event_s": r.first_event_s, "done_s": r.done_s,
                 "tokens": r.tokens, "ended": r.ended}
     finally:

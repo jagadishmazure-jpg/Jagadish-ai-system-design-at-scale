@@ -1,4 +1,4 @@
-"""Talk 16: tail latency and resilience. All simulated; see docs/tail-latency.md."""
+"""Module 16: tail latency and resilience. All simulated; see docs/tail-latency.md."""
 import json
 import math
 import pathlib

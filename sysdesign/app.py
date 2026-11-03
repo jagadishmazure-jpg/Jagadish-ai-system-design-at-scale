@@ -35,7 +35,7 @@ ROUTES = {"/v1/chat": "agent", "/v1/chat/stream": "agent", "/v1/refunds": "jobs"
           "/v1/admin/policy": "admin", "/v1/orders": "orders", "/v1/webhooks/partner": "webhooks"}
 API_KEY_ROUTES = {"/v1/webhooks/partner": "webhooks:write"}  # partner callers: hashed API keys, not JWTs
 _SAFE_ID = re.compile(r"^[A-Za-z0-9-]{8,64}$")
-# Talk 17: every hop must pass SSE through as it is produced: no proxy buffering, no compression.
+# Module 17: every hop must pass SSE through as it is produced: no proxy buffering, no compression.
 SSE_HEADERS = {"cache-control": "no-store, no-transform", "x-accel-buffering": "no"}
 
 

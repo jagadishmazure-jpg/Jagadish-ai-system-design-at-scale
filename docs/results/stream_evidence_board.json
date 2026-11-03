@@ -153,7 +153,7 @@
     "mean_ms": 90,
     "p50_ms": 55,
     "p99_ms": 543,
-    "source": "quoted from the talk; not measured here"
+    "source": "reference figure; not measured here"
   },
   "g_page": {
     "fanout": 100,
@@ -226,6 +226,6 @@
       "abandonment": 0.22,
       "quality_delta": -6
     },
-    "source": "quoted from the talk; not measured in this repo"
+    "source": "reference figure; not measured in this repo"
   }
 }

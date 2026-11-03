@@ -29,12 +29,12 @@ jobs:
         run: python -m loadtest.harness --check
       - name: README and capacity numbers match the results and test count
         run: python scripts/render_docs.py --check
-      - name: Talk 15 caching results and evidence board match a fresh run
+      - name: Module 15 caching results and evidence board match a fresh run
         run: python scripts/caching_bench.py --check && python scripts/evidence_board.py --check && python scripts/tail_latency_bench.py --check && python scripts/tail_evidence_board.py --check && python scripts/caching_after_board.py --check
-      - name: Talk 18 results, evidence board and network waterfall match the committed results
-        run: python scripts/talk18_bench.py --check && python scripts/talk18_evidence_board.py --check
-      - name: Talk 17 results and evidence board match a fresh run
-        run: python scripts/talk17_bench.py --check && python scripts/stream_evidence_board.py --check
+      - name: Module 18 results, evidence board and network waterfall match the committed results
+        run: python scripts/module18_bench.py --check && python scripts/module18_evidence_board.py --check
+      - name: Module 17 results and evidence board match a fresh run
+        run: python scripts/module17_bench.py --check && python scripts/stream_evidence_board.py --check
       - name: Interview docs match the envelope calculator
         run: python scripts/render_interview.py --check
       - name: No real brand names in code or docs
@@ -65,7 +65,7 @@ jobs:
       - name: Install
         run: pip install -r requirements-dev.txt "psycopg[binary]==3.2.9"
       - name: Lua scripts and checkpoints against real Redis and Postgres
-        run: python -m pytest -q -rs tests/test_integration_real_backends.py tests/test_talks_real_redis.py
+        run: python -m pytest -q -rs tests/test_integration_real_backends.py tests/test_modules_real_redis.py
 
   compose-smoke:
     runs-on: ubuntu-latest

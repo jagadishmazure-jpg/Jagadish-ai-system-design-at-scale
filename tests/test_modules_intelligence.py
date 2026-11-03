@@ -1,4 +1,4 @@
-"""Talk 3-11 additions: cost model, governance, context funnel, knowledge routing, enterprise, distributed,
+"""Module 3-11 additions: cost model, governance, context funnel, knowledge routing, enterprise, distributed,
 multi-agent, memory, grounding, tool contracts."""
 import pytest
 

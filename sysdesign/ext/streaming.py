@@ -1,4 +1,4 @@
-"""Talk 17: streaming answers through every hop, and what to do when a stream breaks.
+"""Module 17: streaming answers through every hop, and what to do when a stream breaks.
 
 Pieces (all local, no vendor, no keys):
 - the incident arithmetic: where 16.1 s of blank screen goes, and model speed vs reading speed;
@@ -30,10 +30,10 @@ QUEUE_S = 0.20
 PREFILL_S = 0.60
 READER_TOK_S = 5.5
 TURNS_PER_HOUR = 1200
-# Quoted from the talk, not measured here: an A/B of a model twice as fast.
+# Reference figure, not measured here: an A/B of a model twice as fast.
 QUOTED_AB = {"model_a": {"tok_s": 25, "abandonment": 0.38, "quality_delta": 0},
              "model_b": {"tok_s": 50, "abandonment": 0.22, "quality_delta": -6},
-             "source": "quoted from the talk; not measured in this repo"}
+             "source": "reference figure; not measured in this repo"}
 
 
 def first_token_s(network_s=NETWORK_S, queue_s=QUEUE_S, prefill_s=PREFILL_S) -> float:
@@ -573,8 +573,8 @@ async def resilient_get(port: int, key: str, idle_timeout_s: float, max_reconnec
 
 
 def results() -> dict:
-    """Deterministic talk 17 arithmetic (no sockets); the measured replay is scripts/stream_replay.py."""
-    return {"note": "arithmetic from the story's settings; abandonment and quality are quoted",
+    """Deterministic module 17 arithmetic (no sockets); the measured replay is scripts/stream_replay.py."""
+    return {"note": "arithmetic from the story's settings; abandonment and quality are reference figures",
             "breakdown": breakdown(), "answer_times_s": answer_times(),
             "model_over_reader": model_reader_ratio(), "faster_model_over_reader": model_reader_ratio(50),
             "reader_curve": reader_curve(), "quoted_ab": QUOTED_AB, "transports": compare_transports(),

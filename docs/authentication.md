@@ -22,7 +22,7 @@ For depth on agent identity, delegation and token exchange, see [Jagadish-agent-
 | Internal support tools | Server-side sessions in Redis | Instant revocation, and sessions survive an API restart. |
 | Partner webhooks | Hashed API keys with scopes and expiry | Simple for machine callers, and a leaked key can be revoked. |
 
-## What the tests prove (`tests/test_talks_auth.py`, `tests/test_talks_real_redis.py`; main's `tests/test_auth.py` covers JWT forgery, `alg=none` and unknown `kid`)
+## What the tests prove (`tests/test_modules_auth.py`, `tests/test_modules_real_redis.py`; main's `tests/test_auth.py` covers JWT forgery, `alg=none` and unknown `kid`)
 - A missing bearer token returns **401**. A webhook without an `X-API-Key` header returns **400**, and an invalid, expired or revoked key returns **401**.
 - API keys are stored only as a PBKDF2-SHA256 lookup digest. They carry scopes and an expiry. A leaked key, once revoked, stops working.
 - Redis sessions survive a new store instance (a real Redis in CI). Memory sessions are lost.

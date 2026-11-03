@@ -95,7 +95,7 @@ class SemanticCache:
 
 
 # --------------------------------------------------------------------------
-# Talk 15 addition: exact-match response cache (cache-aside, 24h TTL).
+# Module 15 addition: exact-match response cache (cache-aside, 24h TTL).
 # Sits in front of SemanticCache: a cheap exact lookup first, the similarity
 # search only on a miss. Same intent and PII rules as SemanticCache.
 

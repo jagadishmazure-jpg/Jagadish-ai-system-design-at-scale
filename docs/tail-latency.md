@@ -1,6 +1,6 @@
-# Talk 16: tail latency and resilience
+# Module 16: tail latency and resilience
 
-Everything here is a **simulation** in virtual time with seeded randomness. No real vendor, model or store is called. The numbers come from `python scripts/tail_latency_bench.py` and `python scripts/tail_evidence_board.py`; CI fails if the committed results drift from a fresh run. Source: a public talk on AI system design, credited by topic only and paraphrased in my own words.
+Everything here is a **simulation** in virtual time with seeded randomness. No real vendor, model or store is called. The numbers come from `python scripts/tail_latency_bench.py` and `python scripts/tail_evidence_board.py`; CI fails if the committed results drift from a fresh run. Source: a public module on AI system design, credited by topic only and paraphrased in my own words.
 
 ## The story (fictional)
 
@@ -25,7 +25,7 @@ Each turn makes six calls, one after another: load the session, look up the orde
 | Missed the 20 s deadline | 0.00% | 0.32% | 0.29% | 0.00% |
 | Extra calls from hedging | - | - | - | 4.19% |
 
-Honest gap: the talk's numbers were a 14 s p99 and 8% of turns missing. This replay gives 10.2 s and 0.32%. At 400 turns a minute only about 20 turns are in flight, so 100 workers never fill while the slow path hits just 1% of moderation calls; the large miss rate needs workers to pile up, which the brownout section shows.
+Honest gap: the module's numbers were a 14 s p99 and 8% of turns missing. This replay gives 10.2 s and 0.32%. At 400 turns a minute only about 20 turns are in flight, so 100 workers never fill while the slow path hits just 1% of moderation calls; the large miss rate needs workers to pile up, which the brownout section shows.
 
 ### Why 1% is not small
 
@@ -74,9 +74,9 @@ The average number of requests in flight equals arrival rate times time held: L 
 | Wiring `SlowCallBreaker` and `DeadlineBudget` into the live `ModelGateway` and `/v1/chat` path | Planned |
 | Hedging against a real vendor with cancel-on-first-reply | Planned |
 
-## Talk 17 additions: the mean hides the tail, and pages that do not wait
+## Module 17 additions: the mean hides the tail, and pages that do not wait
 
-Simulated and seeded (`sysdesign/ext/tail_extras.py`, `docs/results/talk17.json`). The talk's own figures were a 90 ms mean, a 55 ms p50 and a 543 ms p99 (quoted). Ours come from 100,000 draws of a lognormal with a median of 55 ms.
+Simulated and seeded (`sysdesign/ext/tail_extras.py`, `docs/results/module17.json`). The reference figures are a 90 ms mean, a 55 ms p50 and a 543 ms p99 (illustrative). Ours come from 100,000 draws of a lognormal with a median of 55 ms.
 
 | | mean | p50 | p90 | p99 |
 |---|---|---|---|---|
@@ -102,6 +102,6 @@ The mean looks healthy, yet 69% of requests are faster than it and the slowest 1
 
 The cost: 99.75% of pages had at least one part still loading at 250 ms, 6.28 parts on average and 12 at p99. That is fine for side panels. It is not acceptable for the part the user came for, which should get its own deadline.
 
-Tests: `tests/test_talk17_tail_extras.py`.
+Tests: `tests/test_module17_tail_extras.py`.
 
-Run it: `python scripts/tail_latency_bench.py && python scripts/tail_evidence_board.py`; tests in `tests/test_talk16_tail_latency.py`.
+Run it: `python scripts/tail_latency_bench.py && python scripts/tail_evidence_board.py`; tests in `tests/test_module16_tail_latency.py`.

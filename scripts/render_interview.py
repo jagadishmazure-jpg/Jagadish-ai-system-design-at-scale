@@ -68,19 +68,19 @@ def render(key: str) -> str:
     if key == "prices":
         return ("| Tier | Input $/1M | Output $/1M |\n|---|---|---|\n" +
                 "".join(f"| {t} | {p[0]:.2f} | {p[1]:.2f} |\n" for t, p in E.EXAMPLE_TIERS.items()))
-    if key == "talk10m":
-        return table(traffic_rows(E.TALK_10M, E.compute(E.TALK_10M)))
-    if key == "talk200k":
-        s = E.TALK_200K
+    if key == "module10m":
+        return table(traffic_rows(E.MODULE_10M, E.compute(E.MODULE_10M)))
+    if key == "module200k":
+        s = E.MODULE_200K
         r = E.compute(s)
         b = E.best_mix(s, s.target_per_conversation, min_frontier=0.05)
         return table(traffic_rows(s, r) + [
             ("Target per conversation", usd(s.target_per_conversation)),
-            ("Meets target at the talk's mix?", "yes" if r["within_target"] else "no"),
+            ("Meets target at the reference mix?", "yes" if r["within_target"] else "no"),
             ("Best-quality mix that fits (frontier >= 5%)",
              f"{mix(b['best_mix'])} = {usd(b['best_cost_per_conversation'])}/conversation")])
     if key == "planted":
-        p = E.planted_mistake(E.TALK_200K, E.PLANTED_CEILING)
+        p = E.planted_mistake(E.MODULE_200K, E.PLANTED_CEILING)
         return table([("Daily cost", usd(p["cost_per_day"])), ("Daily figure it was compared with", usd(p["daily_ceiling"])),
                       ("Daily comparison says", "under" if p["daily_check_passes"] else "over"),
                       ("Conversations per day", big(p["conversations_per_day"])),

@@ -5,7 +5,7 @@ Seven fictional business cases, each answered with the [playbook](../interview-p
 | # | Case | What makes it different |
 |---|---|---|
 | 1 | [Bank assistant (Northwind Ledger Bank)](01-bank-assistant.md) | Write actions, human gates, financial-advice guardrail, residency |
-| 2 | [Retail support (Brightcart)](02-retail-support.md) | Volume, caching, order lookups; links to talks 15-16 |
+| 2 | [Retail support (Brightcart)](02-retail-support.md) | Volume, caching, order lookups; links to modules 15-16 |
 | 3 | [Insurance claims extraction (Harborline Mutual)](03-insurance-claims.md) | Batch documents, schema output, review queue |
 | 4 | [Healthcare intake (Cedarbrook Clinics)](04-healthcare-intake.md) | Safety first, abstain, escalate, never diagnose |
 | 5 | [Mortgage document Q&A (Keystone Home Lending)](05-mortgage-qa.md) | Long documents, citations, per-application isolation |

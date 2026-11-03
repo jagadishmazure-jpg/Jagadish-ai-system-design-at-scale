@@ -2,7 +2,7 @@
 
 In main's load model the model call dominates end-to-end time, so a faster model or fewer model calls (cache, intent ladder) beats tuning the gateway. See [load-test.md](load-test.md) for those numbers; they are not repeated here.
 
-Batching at a fixed offered load (simulated GPU server on one machine, `loadtest/results/talks_benchmarks.json`, produced by `python -m loadtest.talks_benchmarks`):
+Batching at a fixed offered load (simulated GPU server on one machine, `loadtest/results/modules_benchmarks.json`, produced by `python -m loadtest.modules_benchmarks`):
 | Batch | p50 ms | p95 ms | Throughput rps |
 |---|---|---|---|
 | 1 | 510.2 | 976.49 | 195.0 |

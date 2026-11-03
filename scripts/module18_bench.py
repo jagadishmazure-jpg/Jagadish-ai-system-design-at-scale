@@ -1,8 +1,8 @@
-"""Talk 18 numbers.
+"""Module 18 numbers.
 
-python scripts/talk18_bench.py            -> docs/results/talk18.json (deterministic: freshness replay + waterfall
+python scripts/module18_bench.py            -> docs/results/module18.json (deterministic: freshness replay + waterfall
                                              model). --check fails on drift; a test runs the same check.
-python scripts/talk18_bench.py --measure  -> also docs/results/talk18_measured.json (real timings on this
+python scripts/module18_bench.py --measure  -> also docs/results/module18_measured.json (real timings on this
                                              machine: concurrency replay, experiments, delay-proxy TLS probes).
                                              Not drift-checked: timings differ per machine and run.
 """
@@ -16,8 +16,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from sysdesign.ext import freshness, waterfall  # noqa: E402
 
-OUT = ROOT / "docs/results/talk18.json"
-MEASURED = ROOT / "docs/results/talk18_measured.json"
+OUT = ROOT / "docs/results/module18.json"
+MEASURED = ROOT / "docs/results/module18_measured.json"
 
 
 def deterministic() -> str:
@@ -36,9 +36,9 @@ def main(argv) -> int:
     js = deterministic()
     if "--check" in argv:
         if not OUT.exists() or OUT.read_text() != js:
-            print("drift: docs/results/talk18.json - run python scripts/talk18_bench.py")
+            print("drift: docs/results/module18.json - run python scripts/module18_bench.py")
             return 1
-        print("talk 18 results up to date")
+        print("module 18 results up to date")
         return 0
     OUT.write_text(js)
     print(f"wrote {OUT.relative_to(ROOT)}")

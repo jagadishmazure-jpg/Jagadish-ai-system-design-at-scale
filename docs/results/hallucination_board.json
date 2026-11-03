@@ -15,7 +15,7 @@
       "cost_multiplier": 1.0
     },
     {
-      "config": "1 talk 18: dated retrieval + verifier + review queue",
+      "config": "1 module 18: dated retrieval + verifier + review queue",
       "wrong_to_customer": 0.0933,
       "held_back_rate": 0.375,
       "false_abstain_rate": 0.2464,
@@ -232,7 +232,7 @@
       "false_abstain_rate": 0.2179,
       "cost_multiplier": 5.0
     },
-    "talk18_verifier": {
+    "module18_verifier": {
       "wrong_to_customer": 0.0483,
       "false_abstain_rate": 0.2429,
       "cost_multiplier": 1.0

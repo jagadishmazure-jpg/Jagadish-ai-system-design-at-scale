@@ -1,4 +1,4 @@
-"""Talk 16: tail latency and resilience.
+"""Module 16: tail latency and resilience.
 
 Story (fictional): Kestrel, the support assistant for merchants on the made-up Tidewell
 storefront platform, got slow for a week with no deploy and no traffic change. The only

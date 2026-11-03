@@ -1,6 +1,6 @@
 # Backend evolution: from one script to a platform
 
-Each stage exists because the stage before it hit a specific wall. The code is in `sysdesign/` (main) and `sysdesign/ext/backend.py`; the proof is in `tests/test_talks_platform.py` and main's tests.
+Each stage exists because the stage before it hit a specific wall. The code is in `sysdesign/` (main) and `sysdesign/ext/backend.py`; the proof is in `tests/test_modules_platform.py` and main's tests.
 
 | Stage | Shape | Wall it hits | What fixes it (here) |
 |---|---|---|---|
@@ -14,9 +14,9 @@ Each stage exists because the stage before it hit a specific wall. The code is i
 | 7 | Push, not poll | Clients hammer `GET /orders/{id}` | SSE `/v1/orders/{id}/events` with an ownership check, fed by `OrderEvents` (`test_live_order_push_over_sse`) |
 | 8 | Readiness, health and versions | A broken pod still gets traffic | `/readyz` returns 503 on broken config; `/version` reports the git SHA. See [devops-journey.md](devops-journey.md) |
 
-## Step 4 in detail: where session state lives (talk 17)
+## Step 4 in detail: where session state lives (module 17)
 
-Simulated replay (`sysdesign/ext/stateless.py`, `docs/results/talk17.json`): 3 replicas, 60 users over 12 rounds, requests arriving in random order. Each user logs in, then adds cart items or fills form sections.
+Simulated replay (`sysdesign/ext/stateless.py`, `docs/results/module17.json`): 3 replicas, 60 users over 12 rounds, requests arriving in random order. Each user logs in, then adds cart items or fills form sections.
 
 | Setup | Logouts | Lost cart items (of 397) | Lost form sections | One replica dies mid-session: logouts / lost items / lost sections | Heavy user at 10x traffic: max/avg load |
 |---|---|---|---|---|---|

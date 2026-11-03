@@ -1,4 +1,4 @@
-"""Talk 15 evidence board: four panels from the incident replay's real (simulated) numbers.
+"""Module 15 evidence board: four panels from the incident replay's real (simulated) numbers.
 
 Writes docs/img/evidence_board.png and docs/results/evidence_board.json.
 --check re-renders and fails if the JSON numbers drift (PNG bytes vary by font/platform).

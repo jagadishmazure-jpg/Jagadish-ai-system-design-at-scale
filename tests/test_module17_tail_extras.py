@@ -1,4 +1,4 @@
-"""Talk 17 add-ons to talk 16: mean vs percentiles, users vs requests, partial pages. Seeded."""
+"""Module 17 add-ons to module 16: mean vs percentiles, users vs requests, partial pages. Seeded."""
 import pytest
 
 from sysdesign.ext import tail_extras as te
@@ -28,7 +28,7 @@ def test_most_requests_are_faster_than_the_mean():
 
 
 def test_quoted_numbers_kept_separate():
-    assert "quoted" in te.QUOTED["source"] and te.QUOTED["p99_ms"] == 543
+    assert "reference" in te.QUOTED["source"] and te.QUOTED["p99_ms"] == 543
 
 
 def test_pct_edges():

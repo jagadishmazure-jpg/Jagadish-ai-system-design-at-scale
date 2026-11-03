@@ -20,7 +20,7 @@ negative reservation would add budget back.
 ## 3. Guardrails (`sysdesign/guardrails.py`, `sysdesign/pii.py`)
 Normalise text before matching, by applying NFKC and stripping zero-width
 characters. Layer cheap rules, then a classifier. Put action authorization in
-code that the model cannot talk its way past. Use a Luhn check on card
+code that the model cannot module its way past. Use a Luhn check on card
 candidates so order numbers aren't redacted as cards.
 
 ## 4. Router and HITL (`sysdesign/router.py`)

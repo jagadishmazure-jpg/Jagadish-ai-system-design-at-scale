@@ -1,8 +1,8 @@
-"""Talk 17 add-ons to talk 16 (tail latency): the mean hides the tail, 1% of requests is not 1% of
+"""Module 17 add-ons to module 16 (tail latency): the mean hides the tail, 1% of requests is not 1% of
 users, and a page that renders what is ready instead of waiting for its slowest part.
 
 Simulated: latencies are drawn from a seeded lognormal (median 55 ms, sigma 0.99), chosen so the
-shape resembles the talk's example. The talk's own figures are kept in QUOTED and never mixed in.
+shape resembles the reference example. Reference figures are kept in QUOTED and never mixed in.
 """
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import math
 import random
 import statistics
 
-QUOTED = {"mean_ms": 90, "p50_ms": 55, "p99_ms": 543, "source": "quoted from the talk; not measured here"}
+QUOTED = {"mean_ms": 90, "p50_ms": 55, "p99_ms": 543, "source": "reference figure; not measured here"}
 MEDIAN_MS = 55.0
 SIGMA = 0.99
 

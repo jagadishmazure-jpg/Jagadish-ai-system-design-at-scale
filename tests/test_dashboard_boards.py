@@ -1,4 +1,4 @@
-"""Drift checks for the caching "after" board and the talk 18 board / network waterfall."""
+"""Drift checks for the caching "after" board and the module 18 board / network waterfall."""
 from __future__ import annotations
 
 import copy
@@ -27,8 +27,8 @@ def test_caching_after_board_check_passes():
     assert out.returncode == 0, out.stdout + out.stderr
 
 
-def test_talk18_board_check_passes():
-    out = _run("talk18_evidence_board.py")
+def test_module18_board_check_passes():
+    out = _run("module18_evidence_board.py")
     assert out.returncode == 0, out.stdout + out.stderr
 
 
@@ -50,14 +50,14 @@ def test_caching_after_numbers_follow_a_changed_results_file():
     assert mod.numbers(changed) != mod.numbers(src)
 
 
-def test_talk18_numbers_follow_a_changed_results_file():
-    mod = _load("talk18_evidence_board")
-    sim = json.loads((ROOT / "docs/results/talk18.json").read_text())
-    meas = json.loads((ROOT / "docs/results/talk18_measured.json").read_text())
+def test_module18_numbers_follow_a_changed_results_file():
+    mod = _load("module18_evidence_board")
+    sim = json.loads((ROOT / "docs/results/module18.json").read_text())
+    meas = json.loads((ROOT / "docs/results/module18_measured.json").read_text())
     base = mod.numbers(sim, meas)
     changed = copy.deepcopy(sim)
     first = next(iter(changed["waterfall"]["rows"]))
     changed["waterfall"]["rows"][first]["total_ms"] += 1
     assert mod.numbers(changed, meas) != base
-    committed = json.loads((ROOT / "docs/results/talk18_evidence_board.json").read_text())
+    committed = json.loads((ROOT / "docs/results/module18_evidence_board.json").read_text())
     assert committed == base

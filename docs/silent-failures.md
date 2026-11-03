@@ -1,8 +1,8 @@
-# Talk 18 (A): green dashboards, wrong answers
+# Module 18 (A): green dashboards, wrong answers
 
-Source: a public talk on AI system design, credited by topic only and written here in my own words. Everything below is a **simulation** (seeded, offline). The store, its policies and its customers are made up. Numbers come from `python scripts/talk18_bench.py` (`docs/results/talk18.json`), and a test fails if the committed file drifts from a fresh run.
+Everything below is a **simulation** (seeded, offline). The store, its policies and its customers are made up. Numbers come from `python scripts/module18_bench.py` (`docs/results/module18.json`), and a test fails if the committed file drifts from a fresh run.
 
-![Talk 18 evidence board](img/talk18_evidence_board.png)
+![Module 18 evidence board](img/module18_evidence_board.png)
 
 ## The story (fictional)
 
@@ -25,7 +25,7 @@ So the fix is not a better model. It is (1) dated documents, (2) a check on the 
 
 1. **Dated policy versions.** Each `PolicyVersion` has `version`, `effective_from` and `superseded_on`, plus the machine-readable rule (`refund_window_days: 30`). `PolicyStore.search(..., exclude_superseded=True)` only ranks versions in force on the given date. Asking "as of March" still returns the 60-day rule, which is right for a March complaint.
 2. **Freshness check.** `freshness_check` pulls stated values out of the answer ("60-day", "within 30 days", "1 year") and flags any value that matches a superseded version but not the current one.
-3. **Answer verifier.** `verify` reuses the talk 3 grounding check (`ext/grounding.py`, the one behind `test_grounding_blocks_invented_number`): every number in the answer must appear in the evidence handed to the model. It adds the freshness check and a PII check, and turns them into a groundedness share and a confidence score. Below 0.8 the answer goes to `ReviewQueue` instead of the customer. The queue stores redacted text only.
+3. **Answer verifier.** `verify` reuses the module 3 grounding check (`ext/grounding.py`, the one behind `test_grounding_blocks_invented_number`): every number in the answer must appear in the evidence handed to the model. It adds the freshness check and a PII check, and turns them into a groundedness share and a confidence score. Below 0.8 the answer goes to `ReviewQueue` instead of the customer. The queue stores redacted text only.
 4. **Two dashboards.** `replay()` sends 400 seeded questions through a fake model that answers from the top document. 6% of the time it adds an invented "15% restocking credit", and 3% of the time it echoes an email address. Ground truth is judged against the current policy, independent of the verifier.
 
 ## Results (simulated, 400 answers per run)

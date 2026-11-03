@@ -1,4 +1,4 @@
-# ADR (talk 18): dated retrieval before a verifier; CPU work in a process pool
+# ADR (module 18): dated retrieval before a verifier; CPU work in a process pool
 
 **Status:** accepted for the simulated replay. Not wired into the live gateway yet.
 

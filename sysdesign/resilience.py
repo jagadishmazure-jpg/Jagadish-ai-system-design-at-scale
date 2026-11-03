@@ -154,7 +154,7 @@ class ModelGateway:
 
 @dataclass
 class SlowCallBreaker(CircuitBreaker):
-    """Talk 16: a breaker that also opens when calls are *slow*, not only when they fail.
+    """Module 16: a breaker that also opens when calls are *slow*, not only when they fail.
 
     Keeps the parent's failure-count trip and half-open probes. In addition it keeps the
     last `slow_window` call latencies; once the window is full and more than

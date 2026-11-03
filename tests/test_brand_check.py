@@ -11,7 +11,7 @@ def test_blocklist_is_not_empty():
     assert len(cb.TERM_HASHES) > 50 and len(cb.SPELLING_HASHES) > 50
 
 
-def test_detects_source_talk_brands_built_at_runtime():
+def test_detects_brands_built_at_runtime():
     for name in ("Blip" + "card", "Flip" + "kart", "Che" + "vy", "Ama" + "zon"):
         assert cb.find_hits(f"a chatbot for {name} users") == [name], name
 

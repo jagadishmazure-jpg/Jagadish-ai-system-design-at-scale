@@ -49,7 +49,7 @@ def blocks(r: dict) -> dict:
               f"({sum(qs.values())} labelled questions x {r['seeds']} seeds: {qs['answerable']} answerable, "
               f"{qs['unanswerable']} unanswerable, {qs['stale']} stale). Wrong answers reaching customers: "
               f"{pct(lad[0]['wrong_to_customer'])} in the incident setup, {pct(lad[1]['wrong_to_customer'])} with "
-              f"the talk 18 fixes, {pct(lad[5]['wrong_to_customer'])} with all five new controls at one model call, "
+              f"the module 18 fixes, {pct(lad[5]['wrong_to_customer'])} with all five new controls at one model call, "
               f"{pct(lad[7]['wrong_to_customer'])} adding self-consistency only in the log-prob grey band "
               f"(x{lad[7]['cost_multiplier']:g} calls per question vs x{lad[6]['cost_multiplier']:g} for N=5 on "
               f"every question). The price: answerable questions held back rise from "

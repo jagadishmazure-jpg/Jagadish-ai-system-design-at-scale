@@ -1,6 +1,6 @@
 # Case 2: Brightcart retail support assistant
 
-**Prompt:** "Design customer support chat for an online store." (Fictional retailer.) This repo's base build is exactly this kind of assistant, so the case leans on existing talks: [caching.md](../caching.md) (talk 15), [tail-latency.md](../tail-latency.md) (talk 16) and the router and refund workflow in main.
+**Prompt:** "Design customer support chat for an online store." (Fictional retailer.) This repo's base build is exactly this kind of assistant, so the case leans on existing modules: [caching.md](../caching.md) (module 15), [tail-latency.md](../tail-latency.md) (module 16) and the router and refund workflow in main.
 
 ## Clarify (assumed answers)
 
@@ -56,7 +56,7 @@ flowchart LR
 
 ## Deep dive
 
-Prompt order for prefix caching (stable system prompt first, volatile data last) and the response cache keyed by tenant and permissions: `tests/test_talk15_caching.py`. Refund exactly-once after a pod dies: `tests/test_queue_workflow.py`.
+Prompt order for prefix caching (stable system prompt first, volatile data last) and the response cache keyed by tenant and permissions: `tests/test_module15_caching.py`. Refund exactly-once after a pod dies: `tests/test_queue_workflow.py`.
 
 ## Trade-offs
 
@@ -64,7 +64,7 @@ Aggressive caching cuts cost and latency but risks stale answers; invalidate on 
 
 ## Failure modes
 
-A timestamp at the start of the prompt that defeats the provider prefix cache (talk 15 replay); a slow moderation dependency inflating p99 (talk 16 replay).
+A timestamp at the start of the prompt that defeats the provider prefix cache (module 15 replay); a slow moderation dependency inflating p99 (module 16 replay).
 
 ## 10x follow-up
 

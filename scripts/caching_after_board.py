@@ -1,4 +1,4 @@
-"""Talk 15 "after" evidence board: what reordering the prompt changed.
+"""Module 15 "after" evidence board: what reordering the prompt changed.
 
 Reads only the committed docs/results/caching.json (simulated, drift-checked by caching_bench.py --check).
 Writes docs/img/caching_after_board.png and docs/results/caching_after_board.json.

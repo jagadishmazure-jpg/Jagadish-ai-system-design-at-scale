@@ -1,6 +1,6 @@
-# Talk 15: caching for LLM apps (part 1)
+# Module 15: caching for LLM apps (part 1)
 
-Everything on this page is a **simulation** with illustrative prices (input $2.50, output $10.00 per 1M tokens, cached input at 10%, as of 2026-10) and a simulated prefill-time model. The numbers come from `python scripts/caching_bench.py` `python scripts/evidence_board.py` and `python scripts/caching_after_board.py`; CI fails if the committed results drift from a fresh run. Source: a public talk on AI system design, credited by topic only and paraphrased in my own words.
+Everything on this page is a **simulation** with illustrative prices (input $2.50, output $10.00 per 1M tokens, cached input at 10%, as of 2026-10) and a simulated prefill-time model. The numbers come from `python scripts/caching_bench.py` `python scripts/evidence_board.py` and `python scripts/caching_after_board.py`; CI fails if the committed results drift from a fresh run. Source: a public module on AI system design, credited by topic only and paraphrased in my own words.
 
 ## The story (fictional)
 
@@ -31,7 +31,7 @@ The simulator (`sysdesign/ext/llm_cache.py`, `PrefixCacheSim`) follows provider 
 - Bill grew **3.11x** while traffic grew **1.3x**; the prompt itself grew 3.84x.
 - Wrong theories, ruled out with data: average user question stayed at 50 tokens in both months; the price table is identical in both.
 - The confusing spikes: with the timestamp first, **all 937 cache hits** came from requests in the same second for the same merchant (including all 238 same-second retries), and 2,524 of 3,265 busy seconds had no hit at all. After reordering, no busy second was without hits.
-- Reordering cut input cost by **58.2%**, the monthly bill from $118,553 to $63,173, and simulated median TTFT from 0.826s to 0.454s. These are my measured values; they are not tuned to match the talk.
+- Reordering cut input cost by **58.2%**, the monthly bill from $118,553 to $63,173, and simulated median TTFT from 0.826s to 0.454s. These are my measured values; they are not tuned to match the module.
 - Input was 81.4% of each turn's cost ($4.37 of input per $1 of output). The static prompt alone is 840,000,000 identical tokens a day: $2,100.0/day at full price versus $210.0/day if cached.
 
 ![Cost vs hit rate](img/cost_vs_hit_rate.svg)
@@ -88,7 +88,7 @@ Same simulated August traffic, timestamp first vs stable content first. Values c
 - **Faster replies:** first-token p50 0.826s to 0.454s, p95 0.945s to 0.567s.
 - **Hit rate:** requests with a hit 10.93% to 99.99%; input tokens served from cache 7.96% to 68.03%; busy seconds with no hit 2,524 to 0.
 
-Panel-by-panel notes: [dashboards.md, section 1b](dashboards.md#1b-caching-after-board-talk-15).
+Panel-by-panel notes: [dashboards.md, section 1b](dashboards.md#1b-caching-after-board-module-15).
 
 ## Built vs planned
 
@@ -100,4 +100,4 @@ Panel-by-panel notes: [dashboards.md, section 1b](dashboards.md#1b-caching-after
 | Evidence board figure, drift-checked in CI | Built |
 | "After" evidence board (cost, first-token time, hit rate), drift-checked in CI | Built |
 | Measuring a real provider's cached-token counts | Planned |
-| Part 2 of the caching talk | Planned |
+| Caching part 2 | Planned |

@@ -1,6 +1,6 @@
 # RAG pipeline: decisions backed by numbers
 
-All figures are from `python -m loadtest.talks_benchmarks` (`loadtest/results/talks_benchmarks.json`) over a small, self-written policy corpus with 16 questions. Treat them as regression checks, not quality claims.
+All figures are from `python -m loadtest.modules_benchmarks` (`loadtest/results/modules_benchmarks.json`) over a small, self-written policy corpus with 16 questions. Treat them as regression checks, not quality claims.
 
 **Chunk size** (top-1 chunk contains the fact):
 | Words / overlap | Chunks | Top-1 has fact | Avg tokens returned |

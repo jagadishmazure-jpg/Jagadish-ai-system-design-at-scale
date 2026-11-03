@@ -1,12 +1,10 @@
-# Talk 17: streaming answers through every hop
+# Module 17: streaming answers through every hop
 
-Source: a public talk on AI system design, credited by topic only and paraphrased in my own words. Nothing here quotes it.
-
-**What is real and what is not.** The model is a fake. It waits 0.88 s and then emits 380 tokens at 25 a second, because those are the story's settings. Everything between the fake model and the client is real: real sockets on 127.0.0.1, a real gateway stand-in, real nginx 1.26.3, and wall-clock timing. So every time below is a *measured transport* time on top of a *simulated model*. The abandonment and quality figures come from the talk and are marked **quoted**. Measured numbers come from `python scripts/stream_replay.py` (about 4 minutes at full speed) and are stored in `docs/results/stream_replay.json`. The arithmetic is in `docs/results/talk17.json`, and CI fails if it drifts.
+**What is real and what is not.** The model is a fake. It waits 0.88 s and then emits 380 tokens at 25 a second, because those are the story's settings. Everything between the fake model and the client is real: real sockets on 127.0.0.1, a real gateway stand-in, real nginx 1.26.3, and wall-clock timing. So every time below is a *measured transport* time on top of a *simulated model*. The abandonment and quality figures come from the module and are marked **quoted**. Measured numbers come from `python scripts/stream_replay.py` (about 4 minutes at full speed) and are stored in `docs/results/stream_replay.json`. The arithmetic is in `docs/results/module17.json`, and CI fails if it drifts.
 
 ## The story (fictional)
 
-Wren is the support assistant for the made-up Pinecrest Goods stores. People said it was "broken": they typed a question, nothing moved for about 16 seconds, and then the whole answer appeared at once. The talk says 38% left first (quoted). There were no errors, and the model provider looked healthy.
+Wren is the support assistant for the made-up Pinecrest Goods stores. People said it was "broken": they typed a question, nothing moved for about 16 seconds, and then the whole answer appeared at once. The module says 38% left first (quoted). There were no errors, and the model provider looked healthy.
 
 Two quick fixes came up. One was to buy a faster model. The other was to add a progress bar. The evidence below says neither one targets the cause.
 
@@ -25,7 +23,7 @@ Two quick fixes came up. One was to buy a faster model. The other was to add a p
 
 The first token exists after 0.88 s. The user waits for the last one only because some hop holds everything back.
 
-**Why a faster model is the wrong fix.** A reader takes in about 5.5 tokens a second. At 25 tokens a second the model already runs 4.55x faster than anyone reads. At 50 it runs 9.1x faster. The extra speed widens a gap the reader never closes (panel c). The talk's A/B test (quoted) found that a 2x faster model cut abandonment from 38% to 22% but cost 6 quality points. That is a partial gain with a real cost.
+**Why a faster model is the wrong fix.** A reader takes in about 5.5 tokens a second. At 25 tokens a second the model already runs 4.55x faster than anyone reads. At 50 it runs 9.1x faster. The extra speed widens a gap the reader never closes (panel c). The module's A/B test (quoted) found that a 2x faster model cut abandonment from 38% to 22% but cost 6 quality points. That is a partial gain with a real cost.
 
 ## Measured: time to first token, buffered vs streamed (scale 1.0)
 
@@ -78,11 +76,11 @@ The ledger is the request's idempotency key in Redis, the same one the job queue
 - SSE data is JSON-encoded, so a token containing blank lines cannot split or forge an event (tested).
 - Resume reads only the caller's own key. Keys are scoped `{tenant}:{user}:{key}` as in `/v1/refunds`.
 - Event payloads carry order ids, never card numbers, emails, or phone numbers. The ledger expires after 300 s.
-- The whole-turn deadline budget from talk 16 still applies. Idle timeout and grace are slices of it, not extra time.
+- The whole-turn deadline budget from module 16 still applies. Idle timeout and grace are slices of it, not extra time.
 
 ## Limitations
 - The model is a fake with a fixed speed. Real providers vary token to token, and the replay does not show that.
-- The idle timeout here is 2 s (the talk used 10 s) to keep the replay short.
+- The idle timeout here is 2 s (the reference setup used 10 s) to keep the replay short.
 - The FastAPI `/v1/chat/stream` route still produces the full reply before streaming it. It now sends the no-buffer headers, but live token streaming from a real provider through that route is **planned**.
 - The socket tests run at 20x speed with loose tolerances, and one test needs an `nginx` binary (it is skipped otherwise).
 
@@ -97,4 +95,4 @@ The ledger is the request's idempotency key in Redis, the same one the job queue
 | Wiring `StreamLedger` into `/v1/chat/stream` with a real provider stream | Planned |
 | Client-side UI for `truncated` and "continue" | Planned |
 
-Run it: `python scripts/stream_replay.py && python scripts/talk17_bench.py && python scripts/stream_evidence_board.py`. Tests: `tests/test_talk17_streaming.py`.
+Run it: `python scripts/stream_replay.py && python scripts/module17_bench.py && python scripts/stream_evidence_board.py`. Tests: `tests/test_module17_streaming.py`.

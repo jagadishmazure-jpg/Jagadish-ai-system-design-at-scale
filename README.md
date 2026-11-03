@@ -188,7 +188,7 @@ python -m pytest -q                 # in-process: fakeredis + SQLite
 python -m loadtest.harness          # regenerate results.json
 python scripts/render_docs.py       # regenerate README numbers
 python scripts/capacity.py
-python -m loadtest.talks_benchmarks # batching, sticky routing, RAG, index proof -> talks_benchmarks.json
+python -m loadtest.modules_benchmarks # batching, sticky routing, RAG, index proof -> modules_benchmarks.json
 python -m scripts.estimate_10m --scale 10   # 10M-user cost model at 10x
 ```
 
@@ -260,15 +260,15 @@ without a cost estimate first.
 | Capacity calculator | Built, tested |
 | Interview playbook: envelope calculator + CLI, 7 worked cases, 44-question bank, docs drift check | Built, tested (illustrative prices) |
 | docker compose (nginx, 3 replicas, Redis, Postgres, workers, autoscaler, Prometheus) | Built; smoke-tested in CI only (not run on the author's machine) |
-| Talks 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
-| Talk 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
-| Talk 16: tail latency (fan-out math, slow-call breaker, per-dependency bulkheads, hedging, fallback ladder, deadline budget, evidence board) | Built, tested (simulated; [tail-latency.md](docs/tail-latency.md)) |
-| Talk 17: streaming through every hop (SSE ledger resume, truncated fallback, idle timeout, cancel propagation, real-nginx replay, evidence board) | Built, tested (real sockets, fake model; [streaming.md](docs/streaming.md)) |
-| Talk 17 add-ons: retry budget, in-flight duplicate wait, amplification; mean vs percentiles, partial pages; shared session state | Built, tested (simulated; [retries.md](docs/retries.md), [tail-latency.md](docs/tail-latency.md), [backend-evolution.md](docs/backend-evolution.md)) |
+| Modules 3-14 additions in `sysdesign/ext/` (see [coverage map](docs/coverage-map.md)) | Built, tested |
+| Module 15: LLM caching (prompt order, prefix cache, response + embedding caches, evidence board) | Built, tested (simulated; [caching.md](docs/caching.md)) |
+| Module 16: tail latency (fan-out math, slow-call breaker, per-dependency bulkheads, hedging, fallback ladder, deadline budget, evidence board) | Built, tested (simulated; [tail-latency.md](docs/tail-latency.md)) |
+| Module 17: streaming through every hop (SSE ledger resume, truncated fallback, idle timeout, cancel propagation, real-nginx replay, evidence board) | Built, tested (real sockets, fake model; [streaming.md](docs/streaming.md)) |
+| Module 17 add-ons: retry budget, in-flight duplicate wait, amplification; mean vs percentiles, partial pages; shared session state | Built, tested (simulated; [retries.md](docs/retries.md), [tail-latency.md](docs/tail-latency.md), [backend-evolution.md](docs/backend-evolution.md)) |
 | Commerce state (incl. carts) in Redis across replicas | Built, tested |
 | `StreamLedger` wired into `/v1/chat/stream` with a real provider stream; retry budget in the live gateway | Planned |
-| Talk 18: dated policy retrieval, freshness check, answer verifier + review queue, ops vs quality dashboards; network waterfall + delay proxy; event-loop stall replay, process-pool fix, thread/async/process experiments | Built, tested (A, B simulated; C measured; see [silent-failures](docs/silent-failures.md), [network-waterfall](docs/network-waterfall.md), [concurrency](docs/concurrency.md)) |
-| Talk 18 checks wired into the live `/v1/chat` path | Planned |
+| Module 18: dated policy retrieval, freshness check, answer verifier + review queue, ops vs quality dashboards; network waterfall + delay proxy; event-loop stall replay, process-pool fix, thread/async/process experiments | Built, tested (A, B simulated; C measured; see [silent-failures](docs/silent-failures.md), [network-waterfall](docs/network-waterfall.md), [concurrency](docs/concurrency.md)) |
+| Module 18 checks wired into the live `/v1/chat` path | Planned |
 | Hallucination controls: log-prob gate, self-consistency (full and grey-band), retrieval score floor with abstain, citation enforcement, few-shot "I don't know" prompt + strict JSON output, threshold sweeps, evidence board | Built, tested (simulated, seeded fake model; [hallucination-controls](docs/hallucination-controls.md)) |
 | Hallucination controls wired into the live `/v1/chat` path; real-model log-prob calibration | Planned |
 | Partner webhook with hashed, scoped API keys; SSE order push; `/version`; per-route status counter | Built, tested |
@@ -283,13 +283,13 @@ without a cost estimate first.
 | Real provider adapters (keys from a secret store) | Planned |
 | Cloud deployment | Not planned without an approved cost estimate |
 
-## Talks 3-14: what was added
+## Modules 3-14: what was added
 
-Twelve more talks (latency, 10M-user cost, RAG choices, enterprise governance,
+Twelve more modules (latency, 10M-user cost, RAG choices, enterprise governance,
 MLOps, multi-agent and MCP, distributed systems, networking, backend evolution,
 DevOps and authentication) were turned into code on a separate branch and then
 ported here. Wherever main already had the pattern, the port reuses main's
-version instead of adding a second one. Per-talk status and proof:
+version instead of adding a second one. Per-module status and proof:
 [`docs/coverage-map.md`](docs/coverage-map.md). Two findings from that work,
 one about a metric that counted canned answers as successes and one about a
 model-call cap with no per-user share, are written up in
@@ -302,7 +302,7 @@ by v2). A broken v3 whose readiness check fails was then rolled out. The rollout
 halted with all 3 v2 pods still ready, and 1,801 requests were served, 0 failed,
 0 by v3.
 
-Measured on one machine (`loadtest/results/talks_benchmarks.json`, simulated
+Measured on one machine (`loadtest/results/modules_benchmarks.json`, simulated
 where a model is involved): batching 16 vs 1 raised throughput from 195 to 844
 rps; load-aware sticky routing raised prefix-cache hit rate from 0.388 to 0.80;
 a sqlite index turned a 200k-row scan into an index search (about 1,350x faster
@@ -318,32 +318,32 @@ How to answer an open-ended AI system design question, with the numbers computed
 | [interview-cases/](docs/interview-cases/README.md) | Seven worked fictional cases: bank, retail, insurance claims, healthcare intake, mortgage Q&A, enterprise search, low-latency checkout |
 | [interview-question-bank.md](docs/interview-question-bank.md) | 44 questions, each linked to the file or test that proves the answer |
 
-## Talk 15: caching for LLM apps
+## Module 15: caching for LLM apps
 
 A simulated replay of a fictional support assistant whose bill grew 3.11x while traffic grew 1.3x: a timestamp at the start of the prompt meant the provider's prompt cache never matched. Moving the stable parts first cut input cost 58.2% and simulated median TTFT from 0.826s to 0.454s. Details, evidence board and limits: [`docs/caching.md`](docs/caching.md).
 
-## Talk 16: tail latency and resilience
+## Module 16: tail latency and resilience
 
 A simulated replay of a moderation service that turned slow on 1% of calls: turn p99 went from 4.7s to 10.2s with no deploy and no traffic change. Calls in parallel cut the median but left p99 at 9.8s; adding a replica only delayed worker saturation by about 15s in a brownout. Hedging reads at p95 (4.2% extra calls) plus deadline-budget timeouts brought p99 to 4.3s, and a slow-call breaker plus a 12-slot moderation bulkhead kept the brownout from filling the workers. Details, evidence board and limits: [`docs/tail-latency.md`](docs/tail-latency.md).
 
-## Talk 17: streaming through every hop
+## Module 17: streaming through every hop
 
 A fictional retail assistant showed a blank screen for 16 s and then the whole answer at once. The model was fine. The service and the gateway were both buffering. In a replay with a fake model (0.88 s to first token, 25 tok/s, 380 tokens) over real local sockets, the first token arrived at 16.05 s when buffered and 0.884 s when streamed end to end. Real nginx 1.26 with buffering on showed it at 5.48 s. A drop at token 140 resumed from the ledger with 380 tokens generated, against 532 when regenerating. Passing a closed tab's cancel upstream stopped generation at 166 tokens (214 saved). Retries, tail percentiles, partial pages and shared session state were added alongside. Details: [`docs/streaming.md`](docs/streaming.md), [`docs/retries.md`](docs/retries.md).
 
-## Talk 18: silent failures, network waterfall, concurrency
+## Module 18: silent failures, network waterfall, concurrency
 
 - **Stale answers on green dashboards (simulated, 400 answers).** The ops view showed 0 errors, p95 1.066s and 100% uptime both before and after the fix. Before, 304 answers quoted a superseded 60-day refund rule. Dated retrieval plus a verifier sent 0 stale, invented or PII answers, and routed 42 to human review (a verifier alone needed 313). [`docs/silent-failures.md`](docs/silent-failures.md)
 - **Where the seconds go (simulated model, TLS checked for real).** Office 108 ms, hotel 1,400 to 2,400 ms, hotel via an edge server 500 ms. The 40 ms server is 1.7% to 4% of a hotel load. Through a 100 ms delay proxy, the TLS 1.2 handshake took 204 ms and TLS 1.3 took 103 ms. [`docs/network-waterfall.md`](docs/network-waterfall.md)
 - **Concurrency vs parallelism (measured, 8 CPUs, Python 3.13.5).** 100 image jobs on the event loop stalled 2,000 chats for 2,960 ms. A process pool cut the stall to 5.8 ms. For 150 CPU tasks: serial 1.50s, threads 1.54s, asyncio 1.53s, 8 processes 0.24s. [`docs/concurrency.md`](docs/concurrency.md)
 
-![Talk 18 evidence board](docs/img/talk18_evidence_board.png)
+![Module 18 evidence board](docs/img/module18_evidence_board.png)
 
 ## Hallucination controls: confident wrong answers
 
-Five controls on top of the talk 18 verifier and review queue, measured on a labelled set of answerable, unanswerable and stale questions. [`docs/hallucination-controls.md`](docs/hallucination-controls.md)
+Five controls on top of the module 18 verifier and review queue, measured on a labelled set of answerable, unanswerable and stale questions. [`docs/hallucination-controls.md`](docs/hallucination-controls.md)
 
 <!-- BEGIN HALLU_README -->
-Simulated (seeded fake model with log-probs), exact counts over 600 trials (30 labelled questions x 20 seeds: 14 answerable, 10 unanswerable, 6 stale). Wrong answers reaching customers: 61.3% in the incident setup, 9.3% with the talk 18 fixes, 0.5% with all five new controls at one model call, 0.0% adding self-consistency only in the log-prob grey band (x0.627 calls per question vs x2.833 for N=5 on every question). The price: answerable questions held back rise from 24.6% to 32.9%.
+Simulated (seeded fake model with log-probs), exact counts over 600 trials (30 labelled questions x 20 seeds: 14 answerable, 10 unanswerable, 6 stale). Wrong answers reaching customers: 61.3% in the incident setup, 9.3% with the module 18 fixes, 0.5% with all five new controls at one model call, 0.0% adding self-consistency only in the log-prob grey band (x0.627 calls per question vs x2.833 for N=5 on every question). The price: answerable questions held back rise from 24.6% to 32.9%.
 <!-- END HALLU_README -->
 
 ![Hallucination controls evidence board](docs/img/hallucination_board.png)
@@ -354,17 +354,13 @@ Simulated (seeded fake model with log-probs), exact counts over 600 trials (30 l
 - [Jagadish-agent-trace-observability](https://github.com/jagadishmazure-jpg/Jagadish-agent-trace-observability): deeper tracing and cost attribution.
 - [Jagadish-unified-retrieval-router](https://github.com/jagadishmazure-jpg/Jagadish-unified-retrieval-router): retrieval routing in depth.
 - [Jagadish-agent-commerce-streaming](https://github.com/jagadishmazure-jpg/Jagadish-agent-commerce-streaming): SSE agent UI with approve/reject and user cancel. This repo covers the gateway hops, resume and cancel propagation.
-- [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning): token-based capacity planning (separate talk).
+- [Jagadish-llm-capacity-planning](https://github.com/jagadishmazure-jpg/Jagadish-llm-capacity-planning): token-based capacity planning.
 - [Jagadish-azure-finops](https://github.com/jagadishmazure-jpg/Jagadish-azure-finops): cached-rate prompt pricing in a FinOps context.
 - [Jagadish-pii-guard](https://github.com/jagadishmazure-jpg/Jagadish-pii-guard): PII detection in depth.
 - [Jagadish-agent-roi-framework](https://github.com/jagadishmazure-jpg/Jagadish-agent-roi-framework): what the cost numbers mean for value.
 - [Jagadish-food-ingredients-agentic-ai](https://github.com/jagadishmazure-jpg/Jagadish-food-ingredients-agentic-ai): flagship agent with infra-as-code.
 
-## Credits
-
-Patterns were prompted by 17 public talks (plus related ones folded into talk 17) on AI system design that the
-owner shared, which are credited here by topic only. All text and code are
-original, and no talk content is quoted.
+## License
 
 <!-- BEGIN TESTCOUNT -->
 607 tests collected

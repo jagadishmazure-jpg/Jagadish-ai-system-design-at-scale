@@ -1,4 +1,4 @@
-"""Talk 15: caching for LLM apps (part 1). All simulated; see docs/caching.md."""
+"""Module 15: caching for LLM apps (part 1). All simulated; see docs/caching.md."""
 import math
 
 import fakeredis
@@ -342,7 +342,7 @@ def test_committed_results_match_a_fresh_run():
     assert out.returncode == 0, out.stdout
 
 
-def test_readme_talk15_numbers_match_results():
+def test_readme_module15_numbers_match_results():
     import json
     import pathlib
     r = json.loads(pathlib.Path("docs/results/caching.json").read_text())["incident"]

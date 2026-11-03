@@ -1,4 +1,4 @@
-"""Talks 3, 5, 6, 12: backend choices, readiness for rollouts, live order push. Uses main's app and orders."""
+"""Modules 3, 5, 6, 12: backend choices, readiness for rollouts, live order push. Uses main's app and orders."""
 import json
 import socket
 import sqlite3

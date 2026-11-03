@@ -1,6 +1,6 @@
-# Talk 18 (B): 40 ms on the server, seconds in the browser
+# Module 18 (B): 40 ms on the server, seconds in the browser
 
-Source: a public talk on AI system design, credited by topic only and written in my own words. This page extends [networking-journey.md](networking-journey.md) and `tools/latency_probe.py` and does not repeat them.
+This page extends [networking-journey.md](networking-journey.md) and `tools/latency_probe.py` and does not repeat them.
 
 ## The story (fictional)
 
@@ -8,9 +8,9 @@ A founder demos the product from a hotel abroad. The page takes about 4 s to app
 
 ## Two kinds of numbers on this page
 
-- **Simulated** (`sysdesign/ext/waterfall.py`, `docs/results/talk18.json`, drift-checked by a test): a round-trip model on a virtual clock. 200 KB page, 40 ms server time, initial congestion window of 10 segments, 1,460-byte segments.
-- **Measured** (`tools/delay_proxy.py`, `docs/results/talk18_measured.json`): real TLS handshakes on this machine through a local proxy that delays every chunk by half the RTT in each direction.
-- **Quoted**: the talk's illustrative 120 ms (office) and 1,140 ms (hotel). They are shown for comparison only, not as our results.
+- **Simulated** (`sysdesign/ext/waterfall.py`, `docs/results/module18.json`, drift-checked by a test): a round-trip model on a virtual clock. 200 KB page, 40 ms server time, initial congestion window of 10 segments, 1,460-byte segments.
+- **Measured** (`tools/delay_proxy.py`, `docs/results/module18_measured.json`): real TLS handshakes on this machine through a local proxy that delays every chunk by half the RTT in each direction.
+- **Reference**: illustrative 120 ms (office) and 1,140 ms (hotel). They are shown for comparison only, not as our results.
 
 ## The waterfall (simulated)
 
@@ -23,9 +23,9 @@ A founder demos the product from a hotel abroad. The page takes about 4 s to app
 | Hotel, DNS cached + TLS 1.3 | 200 ms | 0 | 200 | 200 | 200 | 40 | 760 | **1,400 ms** | 2.9% |
 | Hotel, warm kept-alive connection | 200 ms | 0 | 0 | 0 | 200 | 40 | 760 | **1,000 ms** | 4.0% |
 | Hotel via edge server (20 ms to edge, warm link to origin 180 ms) | 20 ms | 0 | 20 | 20 | 20 + 180 | 40 | 220 | **500 ms** | 8.0% |
-| *Talk, quoted (illustrative)* | | | | | | | | *120 ms vs 1,140 ms* | *40/1,140 = 3.5%* |
+| *Reference (illustrative)* | | | | | | | | *120 ms vs 1,140 ms* | *40/1,140 = 3.5%* |
 
-The model's office figure (108 ms) is close to the quoted 120 ms. The hotel figure depends on the assumptions: 1,400 ms with TLS 1.3 and cached DNS, 2,400 ms fully cold. Either way the server is 1.7% to 4% of a hotel page load. That matches the talk's point that the server is about 3% of the wait.
+The model's office figure (108 ms) is close to the reference 120 ms. The hotel figure depends on the assumptions: 1,400 ms with TLS 1.3 and cached DNS, 2,400 ms fully cold. Either way the server is 1.7% to 4% of a hotel page load. That matches the module's point that the server is about 3% of the wait.
 
 **Slow start.** 200 KB is 137 segments. The window grows 10, 20, 40, 80, so delivery takes 4 rounds of data. The first round rides with the first byte, and each of the other 3 costs a full RTT. At 200 ms that is 600 ms of waiting that more bandwidth does not fix. Fewer round trips, or shorter ones, do.
 

@@ -1,8 +1,8 @@
-"""Talk 18 evidence board and network waterfall chart.
+"""Module 18 evidence board and network waterfall chart.
 
-Reads docs/results/talk18.json (simulated, drift-checked) and docs/results/talk18_measured.json (measured
-on one machine). Writes docs/img/talk18_evidence_board.png and docs/img/network_waterfall.png.
-Also writes docs/results/talk18_evidence_board.json: every number the two figures draw, copied from the two
+Reads docs/results/module18.json (simulated, drift-checked) and docs/results/module18_measured.json (measured
+on one machine). Writes docs/img/module18_evidence_board.png and docs/img/network_waterfall.png.
+Also writes docs/results/module18_evidence_board.json: every number the two figures draw, copied from the two
 results files. --check re-renders into temp files and fails if that JSON drifts from the results files
 (PNG bytes vary by font/platform, so the JSON is what is compared).
 """
@@ -13,11 +13,11 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SIM = ROOT / "docs/results/talk18.json"
-MEAS = ROOT / "docs/results/talk18_measured.json"
-BOARD = ROOT / "docs/img/talk18_evidence_board.png"
+SIM = ROOT / "docs/results/module18.json"
+MEAS = ROOT / "docs/results/module18_measured.json"
+BOARD = ROOT / "docs/img/module18_evidence_board.png"
 WATERFALL = ROOT / "docs/img/network_waterfall.png"
-JSON = ROOT / "docs/results/talk18_evidence_board.json"
+JSON = ROOT / "docs/results/module18_evidence_board.json"
 PHASE_COLOURS = {"dns": "#8da0cb", "tcp": "#66c2a5", "tls": "#e78ac3", "request_rtt": "#a6d854",
                  "edge_to_origin": "#ffd92f", "server": "#d62728", "transfer": "#fc8d62"}
 
@@ -46,7 +46,7 @@ def stacked_waterfall(ax, wf: dict) -> None:
                 va="center", fontsize=8)
     q = wf["quoted"]
     ax.axvline(q["hotel_ms"], color="grey", linestyle="--")
-    ax.text(q["hotel_ms"] + 10, len(names) - 0.4, f"talk's quoted hotel {q['hotel_ms']} ms", fontsize=8, color="grey")
+    ax.text(q["hotel_ms"] + 10, len(names) - 0.4, f"reference hotel {q['hotel_ms']} ms", fontsize=8, color="grey")
     ax.set_yticks(range(len(names)), names, fontsize=8)
     ax.invert_yaxis()
     ax.set_xlim(0, max(r["total_ms"] for r in rows.values()) * 1.45)
@@ -68,7 +68,7 @@ def draw(sim: dict, meas: dict, board: pathlib.Path, waterfall_png: pathlib.Path
     with plt.xkcd(scale=0.5, length=120, randomness=2):
         fig, ax = plt.subplots(2, 2, figsize=(15, 10))
         m = meas["machine"]
-        fig.suptitle(f"Talk 18 evidence board - A, B simulated; C measured ({m['cpu_count']} CPUs, "
+        fig.suptitle(f"Module 18 evidence board - A, B simulated; C measured ({m['cpu_count']} CPUs, "
                      f"Python {m['python']})", fontsize=15)
         # (a) ops vs quality
         f = sim["freshness"]
@@ -136,8 +136,8 @@ def numbers(sim: dict, meas: dict) -> dict:
     ri, rp = meas["replay_inline"], meas["replay_process_pool"]
     io, cpu = meas["io_experiment"], meas["cpu_experiment"]
     return {
-        "note": "Panels a, b and the waterfall chart: simulated (talk18.json). Panels c, d: measured on one machine "
-                "(talk18_measured.json). Quoted hotel figure is from the source talk.",
+        "note": "Panels a, b and the waterfall chart: simulated (module18.json). Panels c, d: measured on one machine "
+                "(module18_measured.json). Hotel reference figure is illustrative.",
         "a_freshness": {k: {"n": f[k]["n"], "ops_errors": round(f[k]["ops"]["error_rate"] * f[k]["n"]),
                             "wrong_sent": f[k]["wrong_sent"], "sent_to_review": f[k]["sent_to_review"]}
                         for k in ("before", "verifier_only", "after")},
@@ -165,9 +165,9 @@ def main(argv) -> int:
         a.unlink()
         b.unlink()
         if not JSON.exists() or JSON.read_text() != js:
-            print("drift: docs/results/talk18_evidence_board.json - run python scripts/talk18_evidence_board.py")
+            print("drift: docs/results/module18_evidence_board.json - run python scripts/module18_evidence_board.py")
             return 1
-        print("talk 18 board and waterfall numbers up to date; figures render")
+        print("module 18 board and waterfall numbers up to date; figures render")
         return 0
     JSON.write_text(js)
     draw(sim, meas, BOARD, WATERFALL)

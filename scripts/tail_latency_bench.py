@@ -1,4 +1,4 @@
-"""Talk 16 numbers: writes docs/results/tail_latency.json. --check fails on drift."""
+"""Module 16 numbers: writes docs/results/tail_latency.json. --check fails on drift."""
 from __future__ import annotations
 
 import json

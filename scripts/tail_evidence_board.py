@@ -1,4 +1,4 @@
-"""Talk 16 evidence board, drawn from docs/results/tail_latency.json-equivalent numbers.
+"""Module 16 evidence board, drawn from docs/results/tail_latency.json-equivalent numbers.
 
 Writes docs/img/tail_evidence_board.png and docs/results/tail_evidence_board.json.
 --check re-renders and fails if the JSON numbers drift (PNG bytes vary by font/platform).

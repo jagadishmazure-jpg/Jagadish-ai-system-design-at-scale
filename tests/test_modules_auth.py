@@ -1,4 +1,4 @@
-"""Talk 14: auth methods by caller type. Depth lives in Jagadish-agent-auth-security; this stays slim."""
+"""Module 14: auth methods by caller type. Depth lives in Jagadish-agent-auth-security; this stays slim."""
 import time
 
 import fakeredis

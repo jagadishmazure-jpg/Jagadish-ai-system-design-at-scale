@@ -1,6 +1,6 @@
-# Talk 18 (C): concurrency is not parallelism
+# Module 18 (C): concurrency is not parallelism
 
-Source: a public talk on AI system design, credited by topic only and written in my own words. Everything on this page was **measured for real** on one machine: 8 CPUs, Python 3.13.5, GIL enabled (`docs/results/talk18_measured.json`, produced by `python scripts/talk18_bench.py --measure`). Your numbers will differ. CI runs smaller versions with loose bounds (`tests/test_talk18_concurrency.py`) and never compares raw timings.
+Everything on this page was **measured for real** on one machine: 8 CPUs, Python 3.13.5, GIL enabled (`docs/results/module18_measured.json`, produced by `python scripts/module18_bench.py --measure`). Your numbers will differ. CI runs smaller versions with loose bounds (`tests/test_module18_concurrency.py`) and never compares raw timings.
 
 ## The story (fictional)
 
@@ -29,7 +29,7 @@ The trap is the bigger number. 10,000 chats sounds harder than 100 uploads, but 
 
 The fix is one line: `await loop.run_in_executor(process_pool, image_preprocess, seed)`. With it the loop keeps serving chats and the work spreads over 8 cores, about 6.3x the throughput.
 
-## The talk's experiments, on this machine
+## The module's experiments, on this machine
 
 **5,000 tasks that each sleep 50 ms** (pure waiting):
 

@@ -13,15 +13,15 @@ from sysdesign.ext import envelope as E
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
-def test_talk_10m_traffic():
-    r = E.compute(E.TALK_10M)
+def test_module_10m_traffic():
+    r = E.compute(E.MODULE_10M)
     assert r["requests_per_day"] == 50_000_000
     assert r["avg_qps"] == pytest.approx(578.7037, rel=1e-6)
     assert r["peak_qps"] == pytest.approx(1736.111, rel=1e-6)
 
 
-def test_talk_10m_tokens_split():
-    r = E.compute(E.TALK_10M)
+def test_module_10m_tokens_split():
+    r = E.compute(E.MODULE_10M)
     assert r["tokens_per_request"] == 3_000
     assert r["tokens_per_day"] == 150e9
     assert r["input_tokens_per_day"] == 125e9 and r["output_tokens_per_day"] == 25e9
@@ -29,18 +29,18 @@ def test_talk_10m_tokens_split():
 
 def test_cost_by_hand():
     # blended in = .75*.15+.2*1+.05*5 = .5625; out = .75*.6+.2*4+.05*20 = 2.25
-    r = E.compute(E.TALK_10M)
+    r = E.compute(E.MODULE_10M)
     assert r["cost_per_request"] == pytest.approx(2500 * 0.5625e-6 + 500 * 2.25e-6)
     assert r["cost_per_day"] == pytest.approx(126_562.5)
 
 
 def test_all_frontier_is_much_dearer():
-    r = E.compute(E.TALK_10M)
+    r = E.compute(E.MODULE_10M)
     assert r["all_frontier_cost_per_day"] > 8 * r["cost_per_day"]
 
 
-def test_talk_200k_traffic_and_tokens():
-    r = E.compute(E.TALK_200K)
+def test_module_200k_traffic_and_tokens():
+    r = E.compute(E.MODULE_200K)
     assert r["requests_per_day"] == 1_600_000
     assert r["avg_qps"] == pytest.approx(18.5185, rel=1e-4)
     assert r["peak_qps"] == pytest.approx(55.5556, rel=1e-4)
@@ -48,7 +48,7 @@ def test_talk_200k_traffic_and_tokens():
 
 
 def test_planted_mistake_daily_passes_conversation_fails():
-    p = E.planted_mistake(E.TALK_200K, E.PLANTED_CEILING)
+    p = E.planted_mistake(E.MODULE_200K, E.PLANTED_CEILING)
     assert p["daily_check_passes"] is True
     assert p["conversation_check_passes"] is False
     assert p["cost_per_conversation"] == pytest.approx(p["cost_per_day"] / 200_000)
@@ -58,11 +58,11 @@ def test_planted_mistake_daily_passes_conversation_fails():
 
 def test_planted_mistake_needs_target():
     with pytest.raises(ValueError):
-        E.planted_mistake(E.TALK_10M, 1.0)
+        E.planted_mistake(E.MODULE_10M, 1.0)
 
 
 def test_best_mix_meets_target_and_beats_cheapest_on_quality():
-    b = E.best_mix(E.TALK_200K, 0.02, min_frontier=0.05)
+    b = E.best_mix(E.MODULE_200K, 0.02, min_frontier=0.05)
     assert b["best_cost_per_conversation"] <= 0.02
     assert b["best_mix"]["frontier"] >= 0.05
     assert b["cheapest_cost_per_conversation"] <= b["best_cost_per_conversation"]
@@ -71,7 +71,7 @@ def test_best_mix_meets_target_and_beats_cheapest_on_quality():
 
 
 def test_best_mix_is_optimal_on_grid():
-    s, t = E.TALK_200K, 0.02
+    s, t = E.MODULE_200K, 0.02
     b = E.best_mix(s, t, min_frontier=0.05)
     bq = sum(E.QUALITY[k] * v for k, v in b["best_mix"].items())
     for m in E.mixes():
@@ -80,11 +80,11 @@ def test_best_mix_is_optimal_on_grid():
 
 
 def test_best_mix_none_when_impossible():
-    assert E.best_mix(E.TALK_200K, 0.000001) is None
+    assert E.best_mix(E.MODULE_200K, 0.000001) is None
 
 
 def test_best_mix_respects_min_mid():
-    b = E.best_mix(E.TALK_200K, 0.05, min_mid=0.3)
+    b = E.best_mix(E.MODULE_200K, 0.05, min_mid=0.3)
     assert b["cheapest_mix"]["mid"] >= 0.3
 
 
@@ -112,7 +112,7 @@ def test_rejects_negative_price_target_and_peak():
     with pytest.raises(ValueError):
         E.Scenario(1, 1, 1, 1, 1, 1, peak_factor=0.5)
     with pytest.raises(ValueError):
-        E.best_mix(E.TALK_200K, -1)
+        E.best_mix(E.MODULE_200K, -1)
 
 
 def test_mix_must_sum_to_one():
@@ -131,13 +131,13 @@ def test_agent_steps_bank_case():
 
 
 def test_scale_10x_linear_and_cache_reduces_model_load():
-    x = E.scale(E.TALK_200K, 10, cache_hit=0.3)
-    base = E.compute(E.TALK_200K)
+    x = E.scale(E.MODULE_200K, 10, cache_hit=0.3)
+    base = E.compute(E.MODULE_200K)
     assert x["peak_qps"] == pytest.approx(base["peak_qps"] * 10)
     assert x["model_peak_qps"] == pytest.approx(x["peak_qps"] * 0.7)
     assert x["cost_per_day"] == pytest.approx(base["cost_per_day"] * 7)
     with pytest.raises(ValueError):
-        E.scale(E.TALK_200K, 10, cache_hit=1.0)
+        E.scale(E.MODULE_200K, 10, cache_hit=1.0)
 
 
 @pytest.mark.parametrize("name", sorted(E.CASES))

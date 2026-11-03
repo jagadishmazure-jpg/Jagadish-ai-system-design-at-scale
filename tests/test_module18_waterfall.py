@@ -1,4 +1,4 @@
-"""Talk 18 (B): office vs hotel page load, round-trip model plus a real delay proxy."""
+"""Module 18 (B): office vs hotel page load, round-trip model plus a real delay proxy."""
 import json
 import pathlib
 import subprocess
@@ -48,7 +48,7 @@ def test_reused_connection_skips_tcp_and_tls():
     assert p["tcp"] == 0 and p["tls"] == 0 and p["dns"] == 0
 
 
-def test_office_near_talks_quoted_figure():
+def test_office_near_modules_quoted_figure():
     assert abs(waterfall(OFFICE)["total_ms"] - QUOTED["office_ms"]) < 30
 
 
@@ -75,18 +75,18 @@ def test_edge_pays_origin_rtt_once():
 
 def test_results_rows_and_quote_labelled():
     r = results()
-    assert "quoted" in r["quoted"]["source"] and len(r["rows"]) == 5
+    assert "reference" in r["quoted"]["source"] and len(r["rows"]) == 5
     assert r["slow_start_windows"] == [10, 20, 40, 80]
     assert r["quoted_server_share"] == pytest.approx(40 / 1140, abs=1e-4)
 
 
 def test_committed_results_match_fresh_run():
-    committed = json.loads((ROOT / "docs/results/talk18.json").read_text())
+    committed = json.loads((ROOT / "docs/results/module18.json").read_text())
     assert committed["waterfall"] == json.loads(json.dumps(results()))
 
 
 def test_bench_check_script_passes():
-    out = subprocess.run([sys.executable, "scripts/talk18_bench.py", "--check"], cwd=ROOT, capture_output=True, text=True)
+    out = subprocess.run([sys.executable, "scripts/module18_bench.py", "--check"], cwd=ROOT, capture_output=True, text=True)
     assert out.returncode == 0, out.stdout
 
 

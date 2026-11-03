@@ -60,7 +60,7 @@ Hybrid search (keyword for account numbers and amounts, vectors for meaning); th
 
 ## Trade-offs
 
-Bigger chunks give more context but cost more input tokens; measure hit rate per chunk size (talk 6 benchmark in [rag-pipeline.md](../rag-pipeline.md)).
+Bigger chunks give more context but cost more input tokens; measure hit rate per chunk size (module 6 benchmark in [rag-pipeline.md](../rag-pipeline.md)).
 
 ## Failure modes
 

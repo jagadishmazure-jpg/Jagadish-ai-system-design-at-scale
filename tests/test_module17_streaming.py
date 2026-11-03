@@ -1,4 +1,4 @@
-"""Talk 17: streaming through every hop. Socket tests run a fake model 20x faster than the story
+"""Module 17: streaming through every hop. Socket tests run a fake model 20x faster than the story
 and use loose tolerances; arithmetic tests are exact. See docs/streaming.md."""
 import asyncio
 import json
@@ -78,7 +78,7 @@ def test_nothing_on_screen_before_first_token():
 
 
 def test_quoted_ab_is_labelled_quoted():
-    assert "quoted" in st.QUOTED_AB["source"]
+    assert "reference" in st.QUOTED_AB["source"]
     assert st.QUOTED_AB["model_b"]["abandonment"] == 0.22 and st.QUOTED_AB["model_b"]["quality_delta"] == -6
 
 
@@ -376,7 +376,7 @@ def test_real_nginx_buffering_off_keeps_stream():
 REPLAY = json.loads((ROOT / "docs/results/stream_replay.json").read_text())
 
 
-def test_committed_replay_is_full_talk_speed():
+def test_committed_replay_is_full_story_speed():
     assert REPLAY["scale"] == 1.0 and REPLAY["model"]["tokens"] == 380
 
 

@@ -37,7 +37,7 @@
       }
     },
     {
-      "config": "1 talk 18: dated retrieval + verifier + review queue",
+      "config": "1 module 18: dated retrieval + verifier + review queue",
       "trials": 600,
       "wrong_to_customer": 0.0933,
       "wrong_to_customer_count": 56,
@@ -550,8 +550,8 @@
         }
       }
     },
-    "talk18_verifier": {
-      "config": "talk18_verifier",
+    "module18_verifier": {
+      "config": "module18_verifier",
       "trials": 600,
       "wrong_to_customer": 0.0483,
       "wrong_to_customer_count": 29,

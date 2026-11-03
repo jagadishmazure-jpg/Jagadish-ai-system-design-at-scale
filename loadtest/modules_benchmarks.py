@@ -1,6 +1,6 @@
 """Micro-benchmarks and offline evals whose numbers the docs quote.
 
-python -m loadtest.talks_benchmarks      -> loadtest/results/talks_benchmarks.json
+python -m loadtest.modules_benchmarks      -> loadtest/results/modules_benchmarks.json
 """
 from __future__ import annotations
 
@@ -109,5 +109,5 @@ def main() -> dict:
 if __name__ == "__main__":
     r = main()
     (ROOT / "loadtest" / "results").mkdir(exist_ok=True)
-    (ROOT / "loadtest" / "results" / "talks_benchmarks.json").write_text(json.dumps(r, indent=1) + "\n")
+    (ROOT / "loadtest" / "results" / "modules_benchmarks.json").write_text(json.dumps(r, indent=1) + "\n")
     print(json.dumps({k: r[k] for k in ("batching", "reranker", "chunk_size", "index_proof")}, indent=1))

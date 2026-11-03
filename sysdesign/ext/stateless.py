@@ -1,4 +1,4 @@
-"""Talk 17 add-on to backend-evolution step 4: where session state lives behind a balancer.
+"""Module 17 add-on to backend-evolution step 4: where session state lives behind a balancer.
 
 Three replicas behind round-robin (or sticky) routing, three setups:
 - memory: each replica keeps sessions in its own dict (InProcessSessionStore);

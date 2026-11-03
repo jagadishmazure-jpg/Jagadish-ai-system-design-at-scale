@@ -1,4 +1,4 @@
-"""Talk 18 (C): I/O-bound vs CPU-bound on one event loop. Small sizes and loose bounds so CI cannot flake."""
+"""Module 18 (C): I/O-bound vs CPU-bound on one event loop. Small sizes and loose bounds so CI cannot flake."""
 import asyncio
 import json
 import os
@@ -155,7 +155,7 @@ def test_to_thread_check_agent_vs_cpu():
 
 
 def test_committed_measurements_have_machine_and_all_sections():
-    m = json.loads((ROOT / "docs/results/talk18_measured.json").read_text())
+    m = json.loads((ROOT / "docs/results/module18_measured.json").read_text())
     for k in ("machine", "replay_inline", "replay_process_pool", "io_experiment", "cpu_experiment",
               "to_thread_check", "delay_proxy_rtt_100ms"):
         assert k in m
@@ -164,7 +164,7 @@ def test_committed_measurements_have_machine_and_all_sections():
 
 
 def test_committed_measurements_tell_the_story():
-    m = json.loads((ROOT / "docs/results/talk18_measured.json").read_text())
+    m = json.loads((ROOT / "docs/results/module18_measured.json").read_text())
     assert m["replay_inline"]["during_uploads"]["max_stall_ms"] > 100 * m["replay_process_pool"]["during_uploads"][
         "max_stall_ms"] / 10
     assert m["cpu_experiment"]["thread_speedup"] < 1.4 < m["cpu_experiment"]["process_speedup"]
@@ -173,8 +173,8 @@ def test_committed_measurements_tell_the_story():
 def test_evidence_board_renders(tmp_path):
     import sys
     sys.path.insert(0, str(ROOT / "scripts"))
-    import talk18_evidence_board as b
-    sim = json.loads((ROOT / "docs/results/talk18.json").read_text())
-    meas = json.loads((ROOT / "docs/results/talk18_measured.json").read_text())
+    import module18_evidence_board as b
+    sim = json.loads((ROOT / "docs/results/module18.json").read_text())
+    meas = json.loads((ROOT / "docs/results/module18_measured.json").read_text())
     b.draw(sim, meas, tmp_path / "a.png", tmp_path / "b.png")
     assert (tmp_path / "a.png").stat().st_size > 10_000 and (tmp_path / "b.png").stat().st_size > 5_000

@@ -121,7 +121,7 @@ def test_ladder_cuts_wrong_answers_and_shows_the_price():
     assert lad[6]["cost_multiplier"] > 2 * lad[7]["cost_multiplier"]  # selective sampling is much cheaper
 
 
-def test_stale_questions_fixed_by_talk18_and_leftovers_are_invented_extras():
+def test_stale_questions_fixed_by_module18_and_leftovers_are_invented_extras():
     lad = RES["ladder"]
     assert lad[0]["by_kind"]["stale"]["sent_wrong"] == lad[0]["by_kind"]["stale"]["n"]  # incident: all stale
     assert all(x["by_kind"]["stale"].get("sent_wrong", 0) <= 5 for x in lad[1:])

@@ -1,5 +1,5 @@
 {
-  "note": "Panels a, b and the waterfall chart: simulated (talk18.json). Panels c, d: measured on one machine (talk18_measured.json). Quoted hotel figure is from the source talk.",
+  "note": "Panels a, b and the waterfall chart: simulated (module18.json). Panels c, d: measured on one machine (module18_measured.json). Hotel reference figure is illustrative.",
   "a_freshness": {
     "before": {
       "n": 400,

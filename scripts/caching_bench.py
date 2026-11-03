@@ -1,4 +1,4 @@
-"""Talk 15 benchmark: writes docs/results/caching.json and docs/img/cost_vs_hit_rate.svg.
+"""Module 15 benchmark: writes docs/results/caching.json and docs/img/cost_vs_hit_rate.svg.
 
 --check regenerates both in memory and fails if the committed files drift.
 """

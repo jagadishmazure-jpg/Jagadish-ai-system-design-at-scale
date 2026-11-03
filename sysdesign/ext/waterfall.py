@@ -1,4 +1,4 @@
-"""Talk 18 (B): where the other seconds go. A round-trip model of one page load, office vs hotel vs edge.
+"""Module 18 (B): where the other seconds go. A round-trip model of one page load, office vs hotel vs edge.
 
 This is a SIMULATION on a virtual clock: every phase is a count of round trips times the RTT, plus the
 server's own time and the time to push the bytes through the link. tools/delay_proxy.py checks the
@@ -19,7 +19,7 @@ import math
 from dataclasses import asdict, dataclass
 
 MSS = 1460  # bytes per segment
-QUOTED = {"office_ms": 120, "hotel_ms": 1140, "source": "quoted from the talk, illustrative"}
+QUOTED = {"office_ms": 120, "hotel_ms": 1140, "source": "reference figure, illustrative"}
 
 
 @dataclass(frozen=True)

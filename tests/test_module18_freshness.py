@@ -1,4 +1,4 @@
-"""Talk 18 (A): stale policy answers while every ops metric stays green."""
+"""Module 18 (A): stale policy answers while every ops metric stays green."""
 import json
 import pathlib
 from datetime import date
@@ -98,7 +98,7 @@ def test_freshness_flags_old_warranty():
 
 
 def test_grounding_reused_blocks_invented_number():
-    # same check as test_grounding_blocks_invented_number (talk 3), applied to a policy answer
+    # same check as test_grounding_blocks_invented_number (module 3), applied to a policy answer
     assert not grounded(NEW + " You also get a 15% restocking credit.", [POLICIES[1].text])["grounded"]
 
 
@@ -167,5 +167,5 @@ def test_replay_is_deterministic():
 
 
 def test_committed_results_match_fresh_run():
-    committed = json.loads((ROOT / "docs/results/talk18.json").read_text())
+    committed = json.loads((ROOT / "docs/results/module18.json").read_text())
     assert committed["freshness"] == json.loads(json.dumps(results()))

@@ -1,4 +1,4 @@
-"""Talk 18 (C): concurrency vs parallelism. Why a loop that holds thousands of idle chats falls over on
+"""Module 18 (C): concurrency vs parallelism. Why a loop that holds thousands of idle chats falls over on
 100 image uploads, and what fixes it.
 
 Story (fictional): the chat app for the made-up Brightwell Learning platform ran a year on one asyncio
@@ -175,7 +175,7 @@ def replay(idle: int = 2000, jobs: int = 100, mode: str = "inline", workers: int
             pool.shutdown()
 
 
-# --------------------------------------------------------------------------- the talk's experiments
+# --------------------------------------------------------------------------- the experiments
 
 
 def io_experiment(n: int = 5000, sleep_s: float = 0.05, threads: int = 256) -> dict:

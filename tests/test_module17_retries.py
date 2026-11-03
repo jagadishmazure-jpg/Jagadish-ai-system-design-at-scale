@@ -1,4 +1,4 @@
-"""Talk 17 add-on: retry budget, in-flight duplicates, amplification. Virtual time, seeded."""
+"""Module 17 add-on: retry budget, in-flight duplicates, amplification. Virtual time, seeded."""
 import asyncio
 
 import fakeredis
@@ -121,7 +121,7 @@ def test_worst_case_formula():
 
 
 def test_quoted_amplification_is_labelled():
-    assert "quoted" in rt.QUOTED_AMPLIFICATION_WITH_BUDGET["source"]
+    assert "reference" in rt.QUOTED_AMPLIFICATION_WITH_BUDGET["source"]
 
 
 def test_results_deterministic():

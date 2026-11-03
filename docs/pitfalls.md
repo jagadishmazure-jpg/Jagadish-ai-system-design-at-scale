@@ -29,4 +29,4 @@ On the branch, at full scale (40 users in parallel, plus one user sending 600 re
 ## 3. Smaller ones (fixed on the branch, carried over)
 - **Alert rules named metrics that did not exist.** `test_alerts_and_dashboard_only_use_metrics_the_app_exports` now checks both `deploy/alerts.yml` and the Grafana dashboard against the metrics the app registers.
 - **Nagle plus delayed ACK made a latency test flaky (~40 ms stalls).** The probe sets `TCP_NODELAY`. See [networking-journey.md](networking-journey.md).
-- **A lazy import in the batching benchmark pointed at a module that only existed on the branch.** No test covered it; running `python -m loadtest.talks_benchmarks` on main found it.
+- **A lazy import in the batching benchmark pointed at a module that only existed on the branch.** No test covered it; running `python -m loadtest.modules_benchmarks` on main found it.

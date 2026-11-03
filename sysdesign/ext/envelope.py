@@ -165,8 +165,8 @@ def scale(s: Scenario, factor: float, cache_hit: float = 0.0) -> dict:
 
 
 # Worked scenarios used by the docs (fictional; illustrative prices)
-TALK_10M = Scenario(10_000_000, 5, 1, 500, 2_000, 500)
-TALK_200K = Scenario(200_000, 1, 8, 500, 2_000, 500, target_per_conversation=0.02)
+MODULE_10M = Scenario(10_000_000, 5, 1, 500, 2_000, 500)
+MODULE_200K = Scenario(200_000, 1, 8, 500, 2_000, 500, target_per_conversation=0.02)
 PLANTED_CEILING = 6_000.0
 
 CASES = {

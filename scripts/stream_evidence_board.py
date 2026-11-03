@@ -1,6 +1,6 @@
-"""Talk 17 evidence board.
+"""Module 17 evidence board.
 
-Reads docs/results/talk17.json (deterministic, drift-checked) and docs/results/stream_replay.json
+Reads docs/results/module17.json (deterministic, drift-checked) and docs/results/stream_replay.json
 (wall-clock replay, committed as measured). Writes docs/img/stream_evidence_board.png and
 docs/results/stream_evidence_board.json. --check re-renders and fails if the board numbers drift.
 """
@@ -13,7 +13,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
-from talk17_bench import results  # noqa: E402
+from module17_bench import results  # noqa: E402
 
 PNG = ROOT / "docs/img/stream_evidence_board.png"
 JSON = ROOT / "docs/results/stream_evidence_board.json"
@@ -142,7 +142,7 @@ def draw(n: dict, path: pathlib.Path) -> None:
         # (i) quoted
         q = n["i_quoted_ab"]
         ax[2, 2].axis("off")
-        ax[2, 2].text(0.0, 0.95, "(i) Quoted from the talk, not measured:", fontsize=12, va="top")
+        ax[2, 2].text(0.0, 0.95, "(i) Reference figures, not measured:", fontsize=12, va="top")
         ax[2, 2].text(0.0, 0.75, f"2x faster model: abandonment {q['model_a']['abandonment']:.0%} -> "
                                  f"{q['model_b']['abandonment']:.0%}", fontsize=11, va="top")
         ax[2, 2].text(0.0, 0.62, f"quality {q['model_b']['quality_delta']} points", fontsize=11, va="top")

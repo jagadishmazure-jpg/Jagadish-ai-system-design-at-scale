@@ -1,6 +1,6 @@
-# Talk 17 add-on: retries that cannot pile up
+# Module 17 add-on: retries that cannot pile up
 
-A simulation in virtual time with seeded failures (`sysdesign/ext/retries.py`, numbers in `docs/results/talk17.json`). It reuses the existing `RetryPolicy` (max 2 retries) and the job queue's idempotency ledger. Source: a related public talk, credited by topic only and paraphrased.
+A simulation in virtual time with seeded failures (`sysdesign/ext/retries.py`, numbers in `docs/results/module17.json`). It reuses the existing `RetryPolicy` (max 2 retries) and the job queue's idempotency ledger. Source: a related public module, credited by topic only and paraphrased.
 
 ## Retry budget
 
@@ -15,7 +15,7 @@ A simulation in virtual time with seeded failures (`sysdesign/ext/retries.py`, n
 | 100% (outage) | 3.0 | **1.1** | **27.0** | 1.329 |
 
 - During an outage, retrying in every layer multiplies: 3 x 3 x 3 = 27 calls per click against a store that is already down.
-- Retrying in one layer only gives 3x. Adding the budget brings it to 1.1x. The talk also says about 1.1x (quoted), and our measured value matches.
+- Retrying in one layer only gives 3x. Adding the budget brings it to 1.1x. The reference figure is also about 1.1x, and our measured value matches.
 - Budgets in every layer still compound to 1.33x. Retry in one place.
 - The cost is real. At a 20% failure rate the budget lets fewer clicks succeed (89.3% vs 99.3%), because 10% of volume is less than the retries needed. Pick the ratio with that in mind.
 
@@ -32,4 +32,4 @@ A simulation in virtual time with seeded failures (`sysdesign/ext/retries.py`, n
 | Amplification study | Built, tested (simulated) |
 | Budget wired into `ModelGateway` and the live `/v1/chat` path | Planned |
 
-Tests: `tests/test_talk17_retries.py`.
+Tests: `tests/test_module17_retries.py`.

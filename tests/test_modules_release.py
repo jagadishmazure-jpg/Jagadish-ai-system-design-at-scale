@@ -1,4 +1,4 @@
-"""Talks 6 and 13: MLOps hygiene and release safety (alert -> git revert)."""
+"""Modules 6 and 13: MLOps hygiene and release safety (alert -> git revert)."""
 import os
 import pathlib
 import subprocess
